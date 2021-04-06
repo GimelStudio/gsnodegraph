@@ -154,7 +154,9 @@ class NodeGraphBase(wx.ScrolledCanvas):
 
     def UpdateDrawing(self):
         dc = wx.MemoryDC()
+        
         dc.SelectObject(self._buffer)
+        dc = wx.GCDC(dc)
         self.OnDrawBackground(dc)
         dc.SetTransformMatrix(self.matrix)
         self.OnDrawScene(dc)

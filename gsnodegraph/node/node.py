@@ -158,7 +158,7 @@ class NodeBase(object):
 
         # Node header and title
         dc.SetPen(wx.Pen(wx.TRANSPARENT_PEN))
-        dc.SetBrush(wx.Brush(wx.Colour(153, 53, 63, 70)))
+        dc.SetBrush(wx.Brush(wx.Colour(153, 53, 63, 255)))
         dc.DrawRoundedRectangle(x+1, y+1, w-3, 20, 3)
         dc.DrawRectangle(x+1, y+10, w-3, 12)
 
