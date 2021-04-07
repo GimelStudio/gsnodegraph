@@ -79,20 +79,19 @@ class NodeGraphBase(wx.ScrolledCanvas):
 
 
         if event.LeftIsDown() and self._srcNode != None and event.Dragging():
-            if self._srcPlug == None:
+            if self._srcPlug is None:
                 dpnt = self._srcNode.pos + winpnt - self._last_pnt
                 self._srcNode.pos = dpnt
 
                 self._last_pnt = winpnt
 
 
-            elif self._tmpWire != None:
+            elif self._tmp_wire != None:
                 # Set the wire to be active when it is being edited.
-                wire = self._tmpWire
-                wire.active = True
+                self._tmp_wire.active = True
 
                 if winpnt != None:
-                    wire.pnt2 = winpnt
+                    self._tmp_wire.pnt2 = winpnt
 
             self.UpdateDrawing()
 
