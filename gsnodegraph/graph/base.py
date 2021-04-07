@@ -60,7 +60,7 @@ class NodeGraphBase(wx.ScrolledCanvas):
 
 
         # Draw box selection bbox
-        if event.LeftIsDown() is True and self._srcNode is None and self._bbox_start != None:
+        if event.LeftIsDown() is True and self._src_node is None and self._bbox_start != None:
 
             self._bbox_rect = wx.Rect(
                 topLeft=self._bbox_start,
@@ -78,10 +78,10 @@ class NodeGraphBase(wx.ScrolledCanvas):
             self.UpdateDrawing()
 
 
-        if event.LeftIsDown() and self._srcNode != None and event.Dragging():
-            if self._srcPlug is None:
-                dpnt = self._srcNode.pos + winpnt - self._last_pnt
-                self._srcNode.pos = dpnt
+        if event.LeftIsDown() and self._src_node != None and event.Dragging():
+            if self._src_socket is None:
+                dpnt = self._src_node.pos + winpnt - self._last_pnt
+                self._src_node.pos = dpnt
 
                 self._last_pnt = winpnt
 

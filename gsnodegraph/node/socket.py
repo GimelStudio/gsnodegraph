@@ -105,7 +105,7 @@ class NodeSocket(object):
         pnt = pos - self.pos
         distance = math.sqrt(math.pow(pnt.x, 2) + math.pow(pnt.y, 2))
 
-        # Plug hit radius
+        # socket hit radius
         if math.fabs(distance) < SOCKET_HIT_RADIUS:
             return True
 
@@ -117,12 +117,12 @@ class NodeSocket(object):
         dc.SetPen(wx.Pen(wx.Colour("#2B2B2B"), 2))
         dc.SetBrush(wx.Brush(wx.Colour(self.color), wx.SOLID))
 
-        # Draw the plug
+        # Draw the socket
         dc.DrawCircle(final.x, final.y, SOCKET_RADIUS)
 
         w, h = self.tdc.GetTextExtent(self.label)
 
-        # Plug label margin
+        # socket label margin
         if self.direction == SOCKET_INPUT:
             x = final.x + 12
         else:

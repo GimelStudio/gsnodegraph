@@ -106,7 +106,7 @@ class NodeBase(object):
         w, h = self.size
         for i, p in enumerate(outs + ins):
             socket_type = 0  # Socket type IN
-            x = 0  # Plug margin
+            x = 0  # socket margin
             if (p[0], p[1]) in outs:
                 x = w - x + 1
                 socket_type = 1  # Socket type OUT

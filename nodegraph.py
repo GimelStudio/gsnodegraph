@@ -27,7 +27,7 @@ class NodeGraph(NodeGraphBase):
         self.selectedNode = None
 
         self._tmp_wire = None
-        self._srcNode = None
+        self._src_node = None
 
         self.Bind(wx.EVT_LEFT_DOWN, self.OnLeftDown)
         self.Bind(wx.EVT_LEFT_UP, self.OnLeftUp)
@@ -59,17 +59,17 @@ class NodeGraph(NodeGraphBase):
         winpnt = self.CalcMouseCoords(pnt)
  
 
-        self._srcNode = self.HitTest(winpnt)
-        if self._srcNode is not None:
+        self._src_node = self.HitTest(winpnt)
+        if self._src_node is not None:
 
-            # Handle plugs and wires
-            self._srcPlug = self._srcNode.HitTest(winpnt)
+            # Handle sockets and wires
+            self._src_socket = self._src_node.HitTest(winpnt)
 
-            self._srcNode.SetSelected(True)
+            self._src_node.SetSelected(True)
 
-            if self._srcPlug is not None:
+            if self._src_socket is not None:
 
-                pnt1 = self._srcNode.pos + self._srcPlug.pos
+                pnt1 = self._src_node.pos + self._src_socket.pos
 
                 self._tmp_wire = NodeWire(
                     self,
@@ -77,7 +77,7 @@ class NodeGraph(NodeGraphBase):
                     winpnt,
                     None,
                     None,
-                    self._srcPlug.direction
+                    self._src_socket.direction
                 )
 
         else:
@@ -90,8 +90,8 @@ class NodeGraph(NodeGraphBase):
         self.UpdateDrawing()
 
     def OnLeftUp(self, event):
-        self._srcNode = None
-        self._srcPlug = None
+        self._src_node = None
+        self._src_socket = None
         self._tmp_wire = None
         self._bbox_start = None
         self._bbox_rect = None
