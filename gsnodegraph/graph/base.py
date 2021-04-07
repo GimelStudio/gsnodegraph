@@ -31,6 +31,11 @@ class NodeGraphBase(wx.ScrolledCanvas):
         self._middle_pnt = None
         self._last_pnt = None
 
+        self._tmp_wire = None
+        self._src_node = None
+        self._src_socket = None
+        
+
         self._bbox_rect = None
         self._bbox_start = None
 
@@ -62,10 +67,7 @@ class NodeGraphBase(wx.ScrolledCanvas):
         # Draw box selection bbox
         if event.LeftIsDown() is True and self._src_node is None and self._bbox_start != None:
 
-            self._bbox_rect = wx.Rect(
-                topLeft=self._bbox_start,
-                bottomRight=winpnt
-            )
+            self._bbox_rect = wx.Rect(topLeft=self._bbox_start, bottomRight=winpnt)
             self.UpdateDrawing()
 
 
@@ -103,6 +105,11 @@ class NodeGraphBase(wx.ScrolledCanvas):
         if pnt2 != None:
             wire.pnt2 = pnt2
         wire.Draw(dc)
+
+    def DrawSelectionBox(self, dc, rect):
+        dc.SetPen(wx.Pen(wx.Colour('#C2C2C2'), 2.5, wx.PENSTYLE_SHORT_DASH))
+        dc.SetBrush(wx.Brush(wx.Colour(100, 100, 100, 56), wx.SOLID))
+        dc.DrawRectangle(rect)
 
     def OnMousewheel(self, event):
         rotation = event.GetWheelRotation()

@@ -23,11 +23,11 @@ class NodeGraph(NodeGraphBase):
     def __init__(self, *args, **kwds):
         NodeGraphBase.__init__(self, *args, **kwds)
 
-        self.nodes = {}
-        self.selectedNode = None
+        self._nodes = {}
+        
+        self._selected_nodes = []
+        self._active_node = None
 
-        self._tmp_wire = None
-        self._src_node = None
 
         self.Bind(wx.EVT_LEFT_DOWN, self.OnLeftDown)
         self.Bind(wx.EVT_LEFT_UP, self.OnLeftUp)
@@ -39,16 +39,16 @@ class NodeGraph(NodeGraphBase):
         dc.DrawRectangle(0, 0, self.Size[0], self.Size[1])
 
     def OnDrawScene(self, dc):
-        for node in self.nodes:
-            self.nodes[node].Draw(dc)
+        for node in self._nodes:
+            self._nodes[node].Draw(dc)
 
         if self._tmp_wire != None:
             self._tmp_wire.Draw(dc)
 
         if self._bbox_start != None and self._bbox_rect != None:
-            dc.SetPen(wx.Pen(wx.Colour('#C2C2C2'), 2.5, wx.PENSTYLE_SHORT_DASH))
-            dc.SetBrush(wx.Brush(wx.Colour(100, 100, 100, 56), wx.SOLID))
-            dc.DrawRectangle(self._bbox_rect)
+            self.DrawSelectionBox(dc, self._bbox_rect)
+
+
 
 
     def OnDrawInterface(self, dc):
@@ -61,11 +61,10 @@ class NodeGraph(NodeGraphBase):
 
         self._src_node = self.HitTest(winpnt)
         if self._src_node is not None:
+            self.HandleNodeSelection()
 
             # Handle sockets and wires
             self._src_socket = self._src_node.HitTest(winpnt)
-
-            self._src_node.SetSelected(True)
 
             if self._src_socket is not None:
 
@@ -83,6 +82,8 @@ class NodeGraph(NodeGraphBase):
         else:
             # Start the box select bbox
             self._bbox_start = winpnt
+
+            self.DeselectNodes()
                 
 
         self._last_pnt = winpnt
@@ -90,6 +91,17 @@ class NodeGraph(NodeGraphBase):
         self.UpdateDrawing()
 
     def OnLeftUp(self, event):
+
+
+        # Clear selection bbox and set nodes as selected
+        if self._bbox_rect != None:
+
+            self._selected_nodes = self.BoxSelectHitTest(self._bbox_rect)
+            for node in self._selected_nodes:
+                if node.IsSelected() != True and node.IsActive() != True:
+                    node.SetSelected(True)
+
+
         self._src_node = None
         self._src_socket = None
         self._tmp_wire = None
@@ -99,24 +111,71 @@ class NodeGraph(NodeGraphBase):
         self.UpdateDrawing()
 
 
+    def HandleNodeSelection(self):
+        # Set the active node
+        if self._active_node is None:
+            self._active_node = self._src_node
+            self._active_node.SetActive(True)
+
+        else:
+            # We check to make sure this is not just the same
+            # node clicked again, then we switch the active states.
+            #if self._srcNode.GetId() != self._activeNode.GetId():
+            self._active_node.SetActive(False)
+            self._active_node = self._src_node
+            self._active_node.SetActive(True)
+
+        # When a node is active, all the selected nodes
+        # need to be set to the unselected state.
+        if self._selected_nodes != []:
+            for node in self._selected_nodes:
+                node.SetSelected(False)
+
+
+    def BoxSelectHitTest(self, bboxrect):
+        """ Hit-test for box selection. """
+        nodehits = []
+        for node in self._nodes.values():
+            if bboxrect.Intersects(node.GetRect()) == True:
+                nodehits.append(node)
+
+        if nodehits != []:
+            return nodehits
+        else:
+            self.DeselectNodes()
+            return []
+
+
+    def DeselectNodes(self):
+        """ Deselect everything that is selected or active. """
+        for node in self._selected_nodes:
+            node.SetSelected(False)
+
+        self._selected_nodes = []
+
+        if self._active_node != None:
+            self._active_node.SetActive(False)
+            self._active_node = None
+
+
     def HitTest(self, pnt):
 
         mouse_rect = wx.Rect(pnt[0], pnt[1], 2, 2)
 
-        for node in self.nodes:
+        for node in self._nodes:
 
             # TODO: when a node is selected, bring it to the top of the stack
-            if mouse_rect.Intersects(self.nodes[node].GetRect()):
-                return self.nodes[node]
+            if mouse_rect.Intersects(self._nodes[node].GetRect()):
+                return self._nodes[node]
             else:
-                self.nodes[node].SetSelected(False)
+                self._nodes[node].SetSelected(False)
                 #
                 self.UpdateDrawing()
 
 
     def AddNode(self, idname, pos=(0, 0), location="POSITION"):
         node = Node(self)
-        self.nodes[idname] = node
+        self._nodes[idname] = node
         node.pos = wx.Point(pos[0], pos[1])
         return node
         

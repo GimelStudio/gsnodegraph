@@ -26,6 +26,7 @@ class NodeBase(object):
         self._pos = wx.Point(0, 0)
         self._size = wx.Size(NODE_DEFAULT_WIDTH, NODE_DEFAULT_HEIGHT)
         self._selected = False
+        self._active = False
 
         self.sockets = []
 
@@ -68,6 +69,14 @@ class NodeBase(object):
     @selected.setter
     def selected(self, selected: bool) -> None:
         self._selected = selected
+
+    @property
+    def active(self) -> bool:
+        return self._active
+
+    @active.setter
+    def active(self, active: bool) -> None:
+        self._active = active
 
 
     def AddSocket(self, label, color, direction):
@@ -144,12 +153,18 @@ class NodeBase(object):
     def SetSelected(self, selected=True):
         self.selected = selected
 
+    def IsActive(self):
+        return self.active
+
+    def SetActive(self, active=True):
+        self.active = active
+
     def Draw(self, dc):
         x, y = self.GetPosition()
         w, h = self.GetSize()
 
         # Node body and border
-        if self.IsSelected():
+        if self.IsSelected() or self.IsActive():
             dc.SetPen(wx.Pen(wx.Colour(255, 255, 255, 255), 2))
         else:
             dc.SetPen(wx.Pen(wx.Colour(31, 31, 31, 255), 2))
