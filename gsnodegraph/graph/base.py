@@ -31,6 +31,9 @@ class NodeGraphBase(wx.ScrolledCanvas):
         self._middle_pnt = None
         self._last_pnt = None
 
+        self._bbox_rect = None
+        self._bbox_start = None
+
         kwds["style"] = kwds.get("style", 0) | wx.DEFAULT_FRAME_STYLE
         wx.ScrolledCanvas.__init__(self, parent, *args, **kwds)
 
@@ -55,6 +58,17 @@ class NodeGraphBase(wx.ScrolledCanvas):
         pnt = event.GetPosition()
         winpnt = self.CalcMouseCoords(pnt)
 
+
+        # Draw box selection bbox
+        if event.LeftIsDown() is True and self._srcNode is None and self._bbox_start != None:
+
+            self._bbox_rect = wx.Rect(
+                topLeft=self._bbox_start,
+                bottomRight=winpnt
+            )
+            self.UpdateDrawing()
+
+
         # If the MMB is down, calculate the scrolling of the graph
         if event.MiddleIsDown() is True and event.Dragging():
             dx = (winpnt[0] - self._middle_pnt[0])
@@ -71,14 +85,12 @@ class NodeGraphBase(wx.ScrolledCanvas):
 
                 self._last_pnt = winpnt
 
-                
 
             elif self._tmpWire != None:
                 # Set the wire to be active when it is being edited.
                 wire = self._tmpWire
                 wire.active = True
-                # if pnt1 != None:
-                #     wire.pnt1 = pnt1
+
                 if winpnt != None:
                     wire.pnt2 = winpnt
 
@@ -154,7 +166,6 @@ class NodeGraphBase(wx.ScrolledCanvas):
 
     def UpdateDrawing(self):
         dc = wx.MemoryDC()
-        
         dc.SelectObject(self._buffer)
         dc = wx.GCDC(dc)
         self.OnDrawBackground(dc)

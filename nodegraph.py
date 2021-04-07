@@ -26,8 +26,7 @@ class NodeGraph(NodeGraphBase):
         self.nodes = {}
         self.selectedNode = None
 
-        self._tmpWire = None
-
+        self._tmp_wire = None
         self._srcNode = None
 
         self.Bind(wx.EVT_LEFT_DOWN, self.OnLeftDown)
@@ -43,8 +42,13 @@ class NodeGraph(NodeGraphBase):
         for node in self.nodes:
             self.nodes[node].Draw(dc)
 
-        if self._tmpWire != None:
-            self._tmpWire.Draw(dc)
+        if self._tmp_wire != None:
+            self._tmp_wire.Draw(dc)
+
+        if self._bbox_start != None and self._bbox_rect != None:
+            dc.SetPen(wx.Pen(wx.Colour('#C2C2C2'), 2.5, wx.PENSTYLE_SHORT_DASH))
+            dc.SetBrush(wx.Brush(wx.Colour(100, 100, 100, 56), wx.SOLID))
+            dc.DrawRectangle(self._bbox_rect)
 
 
     def OnDrawInterface(self, dc):
@@ -67,7 +71,7 @@ class NodeGraph(NodeGraphBase):
 
                 pnt1 = self._srcNode.pos + self._srcPlug.pos
 
-                self._tmpWire = NodeWire(
+                self._tmp_wire = NodeWire(
                     self,
                     pnt1,
                     winpnt,
@@ -75,6 +79,10 @@ class NodeGraph(NodeGraphBase):
                     None,
                     self._srcPlug.direction
                 )
+
+        else:
+            # Start the box select bbox
+            self._bbox_start = winpnt
                 
 
         self._last_pnt = winpnt
@@ -84,7 +92,9 @@ class NodeGraph(NodeGraphBase):
     def OnLeftUp(self, event):
         self._srcNode = None
         self._srcPlug = None
-        self._tmpWire = None
+        self._tmp_wire = None
+        self._bbox_start = None
+        self._bbox_rect = None
 
         self.UpdateDrawing()
 
