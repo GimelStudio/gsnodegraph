@@ -32,12 +32,9 @@ class NodeBase(object):
 
         self._Init()
 
-
     def _Init(self):
         pass
         
-
-
     @property
     def nodegraph(self):
         return self._nodegraph
@@ -77,7 +74,6 @@ class NodeBase(object):
     @active.setter
     def active(self, active: bool) -> None:
         self._active = active
-
 
     def AddSocket(self, label, color, direction):
 

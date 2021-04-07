@@ -35,7 +35,6 @@ class NodeGraphBase(wx.ScrolledCanvas):
         self._src_node = None
         self._src_socket = None
         
-
         self._bbox_rect = None
         self._bbox_start = None
 
@@ -50,7 +49,6 @@ class NodeGraphBase(wx.ScrolledCanvas):
         self.Bind(wx.EVT_MIDDLE_DOWN, self.OnMiddleDown)
         self.Bind(wx.EVT_MIDDLE_UP, self.OnMiddleUp)
         
-
     def OnPaint(self, event):
         wx.BufferedPaintDC(self, self._buffer)
 
