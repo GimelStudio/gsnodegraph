@@ -76,10 +76,11 @@ class NodeGraphBase(wx.ScrolledCanvas):
         winpnt = self.CalcMouseCoords(pnt)
 
         # Draw box selection bbox
-        if event.LeftIsDown() is True and self._src_node is None and self._bbox_start != None:
-
-            self._bbox_rect = wx.Rect(topLeft=self._bbox_start, bottomRight=winpnt)
-            self.UpdateDrawing()
+        if event.LeftIsDown() is True:
+            if self._src_node is None and self._bbox_start != None:
+                rect = wx.Rect(topLeft=self._bbox_start, bottomRight=winpnt)
+                self._bbox_rect = rect
+                self.UpdateDrawing()
 
         # If the MMB is down, calculate the scrolling of the graph
         if event.MiddleIsDown() is True and event.Dragging():
@@ -91,8 +92,16 @@ class NodeGraphBase(wx.ScrolledCanvas):
 
         if event.LeftIsDown() and self._src_node != None and event.Dragging():
             if self._src_socket is None:
-                dpnt = self._src_node.pos + winpnt - self._last_pnt
-                self._src_node.pos = dpnt
+                
+                # Traslating the selected nodes
+                if self._selected_nodes != []:
+                    for node in self._selected_nodes:
+                        dpnt = node._pos + winpnt - self._last_pnt
+                        node._pos = dpnt
+                else:
+                    # Traslating the active node
+                    dpnt = self._src_node._pos + winpnt - self._last_pnt
+                    self._src_node._pos = dpnt
 
                 self._last_pnt = winpnt
 
@@ -102,6 +111,7 @@ class NodeGraphBase(wx.ScrolledCanvas):
                     wire.pnt2 = wire.dstnode._pos + wire.dstsocket._pos
 
             elif self._tmp_wire != None:
+
                 # Set the wire to be active when it is being edited.
                 self._tmp_wire.active = True
 

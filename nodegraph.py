@@ -163,7 +163,6 @@ class NodeGraph(NodeGraphBase):
 
                             self.ConnectNodes(self._src_socket, dst_socket)
 
-
         # Reset all values
         self._src_node = None
         self._src_socket = None

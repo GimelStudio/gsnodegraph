@@ -20,7 +20,6 @@ import wx
 class NodeWire(object):
     """ Wire for showing a connection between two nodes. """
     def __init__(self, parent, pnt1, pnt2, srcsocket, dstsocket, direction):
-        #self._id = wx.NewIdRef()
         self._parent = parent
         self._pnt1 = pnt1
         self._pnt2 = pnt2
@@ -29,8 +28,8 @@ class NodeWire(object):
         self._srcnode = None
         self._dstnode = None
 
-        self.active = False
-        self.curvature = 8
+        self._active = False
+        self._curvature = 8
         self._direction = direction
 
     @property
@@ -108,7 +107,7 @@ class NodeWire(object):
         
         # Direction of wire
         sign = 1
-        if self._direction == 0:
+        if self.direction == 0:
             sign = -1
 
         # Curvature of the wire
