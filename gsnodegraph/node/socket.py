@@ -32,7 +32,7 @@ class NodeSocket(object):
         self._direction = SOCKET_INPUT
         self._datatype = datatype
 
-        self.wires = []
+        self._wires = []
 
         self._Init()
 

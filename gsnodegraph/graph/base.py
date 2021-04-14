@@ -28,6 +28,12 @@ class NodeGraphBase(wx.ScrolledCanvas):
         self.previous_position = None
         self._buffer = None
 
+        self._wires = []
+        self._nodes = {}
+        
+        self._selected_nodes = []
+        self._active_node = None
+
         self._middle_pnt = None
         self._last_pnt = None
 
@@ -44,6 +50,8 @@ class NodeGraphBase(wx.ScrolledCanvas):
         self.Bind(wx.EVT_PAINT, self.OnPaint)
         self.Bind(wx.EVT_ERASE_BACKGROUND, lambda x: None)
         self.Bind(wx.EVT_SIZE, self.OnSize)
+        self.Bind(wx.EVT_LEFT_DOWN, self.OnLeftDown)
+        self.Bind(wx.EVT_LEFT_UP, self.OnLeftUp)
         self.Bind(wx.EVT_MOTION, self.OnMotion)
         self.Bind(wx.EVT_MOUSEWHEEL, self.OnMousewheel)
         self.Bind(wx.EVT_MIDDLE_DOWN, self.OnMiddleDown)
@@ -57,17 +65,21 @@ class NodeGraphBase(wx.ScrolledCanvas):
         self._buffer = wx.Bitmap(*Size)
         self.UpdateDrawing()
 
+    def OnLeftDown(self, event):
+        pass
+
+    def OnLeftUp(self, event):
+        pass
+
     def OnMotion(self, event):
         pnt = event.GetPosition()
         winpnt = self.CalcMouseCoords(pnt)
-
 
         # Draw box selection bbox
         if event.LeftIsDown() is True and self._src_node is None and self._bbox_start != None:
 
             self._bbox_rect = wx.Rect(topLeft=self._bbox_start, bottomRight=winpnt)
             self.UpdateDrawing()
-
 
         # If the MMB is down, calculate the scrolling of the graph
         if event.MiddleIsDown() is True and event.Dragging():
@@ -77,7 +89,6 @@ class NodeGraphBase(wx.ScrolledCanvas):
             self.ScenePostPan(dx, dy)
             self.UpdateDrawing()
 
-
         if event.LeftIsDown() and self._src_node != None and event.Dragging():
             if self._src_socket is None:
                 dpnt = self._src_node.pos + winpnt - self._last_pnt
@@ -85,6 +96,10 @@ class NodeGraphBase(wx.ScrolledCanvas):
 
                 self._last_pnt = winpnt
 
+                # Redraw the wires
+                for wire in self._wires:
+                    wire.pnt1 = wire.srcnode._pos + wire.srcsocket._pos
+                    wire.pnt2 = wire.dstnode._pos + wire.dstsocket._pos
 
             elif self._tmp_wire != None:
                 # Set the wire to be active when it is being edited.
@@ -94,15 +109,6 @@ class NodeGraphBase(wx.ScrolledCanvas):
                     self._tmp_wire.pnt2 = winpnt
 
             self.UpdateDrawing()
-
-
-    @staticmethod
-    def DrawNodeWire(dc, wire, pnt1=None, pnt2=None):
-        if pnt1 != None:
-            wire.pnt1 = pnt1
-        if pnt2 != None:
-            wire.pnt2 = pnt2
-        wire.Draw(dc)
 
     def DrawSelectionBox(self, dc, rect):
         dc.SetPen(wx.Pen(wx.Colour('#C2C2C2'), 2.5, wx.PENSTYLE_SHORT_DASH))
@@ -228,7 +234,6 @@ class NodeGraphBase(wx.ScrolledCanvas):
 
     def GetTranslateY(self):
         return self.matrix.GetTranslateY()
-
 
     def FocusPositionScene(self, scene_point):
         window_width, window_height = self.ClientSize

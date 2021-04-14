@@ -17,20 +17,13 @@
 import wx
 
 from gsnodegraph import NodeGraphBase, Node, NodeWire
+from gsnodegraph.constants import *
 
 
 class NodeGraph(NodeGraphBase):
     def __init__(self, *args, **kwds):
         NodeGraphBase.__init__(self, *args, **kwds)
 
-        self._nodes = {}
-        
-        self._selected_nodes = []
-        self._active_node = None
-
-
-        self.Bind(wx.EVT_LEFT_DOWN, self.OnLeftDown)
-        self.Bind(wx.EVT_LEFT_UP, self.OnLeftUp)
 
     def OnDrawBackground(self, dc):
         dc.SetBackground(wx.Brush('#2E2E2E'))
@@ -48,8 +41,8 @@ class NodeGraph(NodeGraphBase):
         if self._bbox_start != None and self._bbox_rect != None:
             self.DrawSelectionBox(dc, self._bbox_rect)
 
-
-
+        for wire in self._wires:
+            wire.Draw(dc)
 
     def OnDrawInterface(self, dc):
         pass
@@ -58,7 +51,7 @@ class NodeGraph(NodeGraphBase):
         pnt = event.GetPosition()
         winpnt = self.CalcMouseCoords(pnt)
  
-
+        # The node has been clicked
         self._src_node = self.HitTest(winpnt)
         if self._src_node is not None:
             self.HandleNodeSelection()
@@ -68,16 +61,49 @@ class NodeGraph(NodeGraphBase):
 
             if self._src_socket is not None:
 
-                pnt1 = self._src_node.pos + self._src_socket.pos
+                if self._src_socket._direction == SOCKET_OUTPUT:
+                    pnt1 = self._src_node.pos + self._src_socket.pos
 
-                self._tmp_wire = NodeWire(
-                    self,
-                    pnt1,
-                    winpnt,
-                    None,
-                    None,
-                    self._src_socket.direction
-                )
+                    self._tmp_wire = NodeWire(
+                        self,
+                        pnt1,
+                        winpnt,
+                        None,
+                        None,
+                        self._src_socket.direction
+                    )
+
+                # If this is an input socket, we disconnect any already-existing
+                # sockets and connect the new wire. We do not allow disconnections
+                # from the output socket
+                elif self._src_socket._direction == SOCKET_INPUT:
+
+                    for wire in self._wires:
+                        if wire._dstsocket == self._src_socket:
+                            dst = wire._dstsocket
+                            self._src_socket = wire._srcsocket
+                            self.DisconnectNodes(self._src_socket, dst)
+
+                    # Refresh the nodegraph
+                    self.UpdateDrawing()
+
+                    # Create the temp wire again
+                    pnt = event.GetPosition()
+                    winpnt = self.CalcMouseCoords(pnt)
+                    pnt1 = self._src_socket._node._pos + self._src_socket._pos
+
+                    # Draw the temp wire with the new values
+                    self._tmp_wire = NodeWire(
+                        self,
+                        pnt1,
+                        winpnt,
+                        None,
+                        None,
+                        self._src_socket._direction,
+                    )
+
+                    # Important: we re-assign the source node variable
+                    self._src_node = self._src_socket._node
 
         else:
             # Start the box select bbox
@@ -88,6 +114,7 @@ class NodeGraph(NodeGraphBase):
 
         self._last_pnt = winpnt
 
+        # Refresh the nodegraph
         self.UpdateDrawing()
 
     def OnLeftUp(self, event):
@@ -101,6 +128,24 @@ class NodeGraph(NodeGraphBase):
                 if node.IsSelected() != True and node.IsActive() != True:
                     node.SetSelected(True)
 
+        # Attempt to make a connection
+        if self._src_node != None:
+            dstnode = self.HitTest(winpnt)
+            if dstnode != None:
+                dst_socket = dstnode.HitTest(winpnt)
+
+                # Make sure not to allow the same datatype or
+                # 'plug type' of sockets to be connected!
+                if dst_socket != None:# \
+                        #and self._srcPlug.GetType() != dstplug.GetType() \
+                        #and self._srcNode.GetId() != dstnode.GetId() \
+                        #and self._srcPlug.GetDataType() == dstplug.GetDataType():
+
+                    # Only allow a single node to be
+                    # connected to any one socket.
+                    #if len(dstplug.GetWires()) < 1:
+                    self.ConnectNodes(self._src_socket, dst_socket)
+
         # Reset all values
         self._src_node = None
         self._src_socket = None
@@ -110,7 +155,6 @@ class NodeGraph(NodeGraphBase):
 
         # Refresh the nodegraph
         self.UpdateDrawing()
-
 
     def HandleNodeSelection(self):
         # Set the active node
@@ -172,4 +216,25 @@ class NodeGraph(NodeGraphBase):
         self._nodes[idname] = node
         node.pos = wx.Point(pos[0], pos[1])
         return node
-        
+
+    def ConnectNodes(self, src_socket, dst_socket):
+        pt1 = src_socket._node._pos + src_socket._pos
+        pt2 = dst_socket._node._pos + dst_socket._pos
+        wire = NodeWire(
+            src_socket,
+            pt1,
+            pt2,
+            src_socket,
+            dst_socket,
+            src_socket._direction,
+            )
+        wire.srcnode = src_socket._node
+        wire.dstnode = dst_socket._node
+        wire._srcsocket = src_socket
+        wire._dstsocket = dst_socket
+        self._wires.append(wire)
+
+    def DisconnectNodes(self, src_socket, dst_socket):
+        for wire in self._wires:
+            if wire.srcsocket is src_socket and wire.dstsocket is dst_socket:
+                self._wires.remove(wire)

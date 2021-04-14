@@ -26,6 +26,8 @@ class NodeWire(object):
         self._pnt2 = pnt2
         self._srcsocket = srcsocket
         self._dstsocket = dstsocket
+        self._srcnode = None
+        self._dstnode = None
 
         self.active = False
         self.curvature = 8
