@@ -110,11 +110,11 @@ class NodeBase(object):
         x, y = self.pos
         w, h = self.size
         for i, p in enumerate(outs + ins):
-            socket_type = 0  # Socket type IN
+            socket_type = SOCKET_INPUT  # Socket type IN
             x = 0  # socket margin
             if (p[0], p[1]) in outs:
                 x = w - x + 1
-                socket_type = 1  # Socket type OUT
+                socket_type = SOCKET_OUTPUT  # Socket type OUT
 
             # We keep track of where the last socket is placed
             lastcoord = 60 + 30 * i

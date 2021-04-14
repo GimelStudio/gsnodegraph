@@ -108,7 +108,7 @@ class NodeWire(object):
         
         # Direction of wire
         sign = 1
-        if self.direction == 0:
+        if self._direction == 0:
             sign = -1
 
         # Curvature of the wire
