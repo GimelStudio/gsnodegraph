@@ -15,6 +15,7 @@
 # ----------------------------------------------------------------------------
 
 import wx
+import uuid
 
 from .socket import NodeSocket
 from ..constants import *
@@ -23,17 +24,22 @@ from ..constants import *
 class NodeBase(object):
     def __init__(self, nodegraph):
         self._nodegraph = nodegraph
+        self._id = uuid.uuid4()
         self._pos = wx.Point(0, 0)
         self._size = wx.Size(NODE_DEFAULT_WIDTH, NODE_DEFAULT_HEIGHT)
         self._selected = False
         self._active = False
 
-        self.sockets = []
+        self._sockets = []
 
-        self._Init()
+        self._isoutput = False
+        self._label = ""
+        self._category = "INPUT"
+        self._headercolor = "#fff"
 
     def _Init(self):
-        pass
+        self.InitSockets()
+        self.InitHeaderColor()
         
     @property
     def nodegraph(self):
@@ -76,36 +82,35 @@ class NodeBase(object):
         self._active = active
 
     def AddSocket(self, label, color, direction):
-
-        #socket = NodeSocket(label, self)
-
-        #self.sockets.append(socket)
         self.ArrangeSockets()
 
     def HitTest(self, pos):
         # Handle socket hittest
-        for socket in self.sockets:
+        for socket in self._sockets:
             if socket.HitTest(pos - self.pos):
                 return socket
 
+    def IsOutputNode(self):
+        return self._isoutput
 
+    def InitHeaderColor(self):
+        self._headercolor = NODE_CATEGORY_COLORS[self._category]
 
-    def ArrangeSockets(self):
+    def InitSockets(self):
         x, y, w, h = self.GetRect()
 
         _id = wx.NewIdRef()
 
         sockets = []
 
-        # (id, label, color)
         ins = []
         outs = []
 
         for param in ["Image", "Image"]:
             ins.append((param, "RENDERIMAGE"))
 
-        #if self.IsOutputNode() != True:
-        outs = [('Output', "VALUE")]
+        if self.IsOutputNode() != True:
+            outs = [('Output', "RENDERIMAGE")]
 
         x, y = self.pos
         w, h = self.size
@@ -124,7 +129,7 @@ class NodeBase(object):
             socket.pos = wx.Point(x, 40 + (19 * i))
             sockets.append(socket)
 
-        self.sockets = sockets
+        self._sockets = sockets
 
         # Adjust the size of the node to fit 
         # the amount of sockets the node has.
@@ -169,29 +174,39 @@ class NodeBase(object):
 
         # Node header and title
         dc.SetPen(wx.Pen(wx.TRANSPARENT_PEN))
-        dc.SetBrush(wx.Brush(wx.Colour(153, 53, 63, 255)))
+        dc.SetBrush(wx.Brush(wx.Colour(self._headercolor)))
         dc.DrawRoundedRectangle(x+1, y+1, w-3, 20, 3)
         dc.DrawRectangle(x+1, y+10, w-3, 12)
 
         fnt = self.nodegraph.GetFont()
         dc.SetFont(fnt)
         dc.SetTextForeground(wx.Colour('#fff'))
-        dc.DrawText("Image", x+10, y+1)
+        dc.DrawText(self._label, x+10, y+1)
 
-        for socket in self.sockets:
+        for socket in self._sockets:
             socket.Draw(dc)
 
 
-
-
-class Node(NodeBase):
+class OutputNode(NodeBase):
     def __init__(self, nodegraph):
         NodeBase.__init__(self, nodegraph)
 
+        self._label = "Output"
+        self._isoutput = True
+        self._category = "OUTPUT"
 
 
-class OutputNodeObject(NodeBase):
-    def __init__(self, nodegraph, pos):
+class ImageNode(NodeBase):
+    def __init__(self, nodegraph):
         NodeBase.__init__(self, nodegraph)
 
+        self._label = "Image"
+        self._category = "INPUT"
 
+
+class MixNode(NodeBase):
+    def __init__(self, nodegraph):
+        NodeBase.__init__(self, nodegraph)
+
+        self._label = "Mix"
+        self._category = "BLEND"

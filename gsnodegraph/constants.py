@@ -25,5 +25,19 @@ SOCKET_DATATYPES = {
     "VALUE": "#A0A0A0",
 }
 
+NODE_CATEGORY_COLORS = {
+    "INPUT": "#975B5B",  # Burgendy
+    "DRAW": "#AF4467",  # Pink
+    "MASK": "#084D4D",  # Blue-green
+    "CONVERT": "#564B7C",  # Purple
+    "VALUE": "#CC783D",  # Orange
+    "FILTER": "#558333",  # Green
+    "BLEND": "#498DB8",  # Light blue
+    "COLOR": "#C2AF3A",  # Yellow
+    "DISTORT": "#6B8B8B",  # Blue-Grey
+    "OUTPUT": "#B33641",  # Red
+    "DEFAULT": "#975B5B"  # Burgendy
+}
+
 NODE_DEFAULT_WIDTH = 136
 NODE_DEFAULT_HEIGHT = 150

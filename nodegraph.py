@@ -16,13 +16,15 @@
 
 import wx
 
-from gsnodegraph import NodeGraphBase, Node, NodeWire
+from gsnodegraph import NodeGraphBase, NodeWire
 from gsnodegraph.constants import *
 
 
 class NodeGraph(NodeGraphBase):
-    def __init__(self, *args, **kwds):
-        NodeGraphBase.__init__(self, *args, **kwds)
+    def __init__(self, parent, registry, **kwds):
+        NodeGraphBase.__init__(self, parent, **kwds)
+
+        self._noderegistry = registry
 
 
     def OnDrawBackground(self, dc):
@@ -231,8 +233,9 @@ class NodeGraph(NodeGraphBase):
             self.UpdateDrawing()
 
     def AddNode(self, idname, pos=(0, 0), location="POSITION"):
-        node = Node(self)
-        self._nodes[idname] = node
+        node = self._noderegistry[idname](self)
+        node._Init()
+        self._nodes[node._id] = node
         node.pos = wx.Point(pos[0], pos[1])
         return node
 

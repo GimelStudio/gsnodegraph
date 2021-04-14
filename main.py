@@ -17,6 +17,7 @@
 import wx
 
 from nodegraph import NodeGraph
+from gsnodegraph.node.node import OutputNode, MixNode, ImageNode
 
 import ctypes
 try:
@@ -31,16 +32,18 @@ class MyFrame(wx.Frame):
                  style=wx.DEFAULT_FRAME_STYLE, name='frame'):
         wx.Frame.__init__(self, parent, id, title, pos, size, style, name)
 
-        
+        registry = {
+            'image_node': ImageNode,
+            'mix_node': MixNode,
+            'output_node': OutputNode
+        }
 
-        ng = NodeGraph(self)
+        ng = NodeGraph(self, registry)
 
-        node = ng.AddNode('image1', wx.Point(10, 10))
-        node.AddSocket("Image", "#fff", 1)
-
-
-        node2 = ng.AddNode('image2', wx.Point(100, 100))
-        node2.AddSocket("Image", "#fff", 1)
+        node = ng.AddNode('image_node', wx.Point(100, 10))
+        node2 = ng.AddNode('image_node', wx.Point(400, 100))
+        node3 = ng.AddNode('mix_node', wx.Point(400, 100))
+        node4 = ng.AddNode('output_node', wx.Point(300, 270))
         
 
         self.Maximize(True)
