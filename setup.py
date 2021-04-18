@@ -1,13 +1,13 @@
 from setuptools import setup
 
-with open("README.md", "r", encoding="utf-8") as fh:
+with open("README.md", "r") as fh:
     long_description = fh.read()
 
 
 setup(
   name = 'gsnodegraph',   
   packages = ['gsnodegraph'],   
-  version = '0.1.0',
+  version = '0.1.1',
   license='Apache 2.0',   
   description = 'Powerful nodegraph widget for wxpython GUIs',
   long_description=long_description,
