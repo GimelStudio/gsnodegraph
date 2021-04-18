@@ -1,5 +1,8 @@
 from setuptools import setup
 
+with open("README.md", "r", encoding="utf-8") as fh:
+    long_description = fh.read()
+
 
 setup(
   name = 'gsnodegraph',   
@@ -7,8 +10,8 @@ setup(
   version = '0.1.0',
   license='Apache 2.0',   
   description = 'Powerful nodegraph widget for wxpython GUIs',
-  long_description=open('README.md').read(),
-  long_description_content_type='text/markdown',
+  long_description=long_description,
+  long_description_content_type="text/markdown",
   author = 'Correct Syntax, Noah Rahm', 
   author_email = 'correctsyntax@yahoo.com',     
   url = 'https://github.com/Correct-Syntax/gsnodegraph', 
