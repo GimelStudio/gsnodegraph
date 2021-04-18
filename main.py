@@ -16,8 +16,8 @@
 
 import wx
 
-from nodegraph import NodeGraph
-from gsnodegraph.node.node import OutputNode, MixNode, ImageNode
+from gsnodegraph import NodeGraph
+from nodes import OutputNode, MixNode, ImageNode
 
 import ctypes
 try:

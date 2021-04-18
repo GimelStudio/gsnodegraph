@@ -1,1 +1,1 @@
-from .base import NodeGraphBase
+from .base import NodeGraph

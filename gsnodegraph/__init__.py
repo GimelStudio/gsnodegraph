@@ -1,2 +1,2 @@
-from .graph import NodeGraphBase
-from .node import NodeSocket, NodeWire
+from .graph import NodeGraph
+from .node import NodeBase, NodeSocket, NodeWire

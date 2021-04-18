@@ -14,14 +14,29 @@
 # limitations under the License.
 # ----------------------------------------------------------------------------
 
-import wx
-
-from gsnodegraph import NodeGraphBase
-from gsnodegraph.constants import *
+from gsnodegraph import NodeBase
 
 
-class NodeGraph(NodeGraphBase):
-    def __init__(self, parent, registry, **kwds):
-        NodeGraphBase.__init__(self, parent, **kwds)
+class OutputNode(NodeBase):
+    def __init__(self, nodegraph):
+        NodeBase.__init__(self, nodegraph)
 
-    
+        self._label = "Output"
+        self._isoutput = True
+        self._category = "OUTPUT"
+
+
+class ImageNode(NodeBase):
+    def __init__(self, nodegraph):
+        NodeBase.__init__(self, nodegraph)
+
+        self._label = "Image"
+        self._category = "INPUT"
+
+
+class MixNode(NodeBase):
+    def __init__(self, nodegraph):
+        NodeBase.__init__(self, nodegraph)
+
+        self._label = "Mix"
+        self._category = "BLEND"

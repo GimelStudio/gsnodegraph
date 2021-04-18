@@ -185,28 +185,3 @@ class NodeBase(object):
 
         for socket in self._sockets:
             socket.Draw(dc)
-
-
-class OutputNode(NodeBase):
-    def __init__(self, nodegraph):
-        NodeBase.__init__(self, nodegraph)
-
-        self._label = "Output"
-        self._isoutput = True
-        self._category = "OUTPUT"
-
-
-class ImageNode(NodeBase):
-    def __init__(self, nodegraph):
-        NodeBase.__init__(self, nodegraph)
-
-        self._label = "Image"
-        self._category = "INPUT"
-
-
-class MixNode(NodeBase):
-    def __init__(self, nodegraph):
-        NodeBase.__init__(self, nodegraph)
-
-        self._label = "Mix"
-        self._category = "BLEND"
