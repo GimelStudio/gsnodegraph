@@ -3,7 +3,7 @@ from setuptools import setup
 
 setup(
   name = 'gsnodegraph',   
-  packages = ['gsnodegraph'],   
+  packages = ['gsnodegraph', 'gsnodegraph.graph', 'gsnodegraph.node'],   
   version = '0.1.2',
   license='Apache 2.0',   
   description = 'Powerful nodegraph widget for wxpython GUIs',
