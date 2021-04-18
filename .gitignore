@@ -1,3 +1,8 @@
 
+# Ignore PyPI stuff
+build
+dist
+gsnodegraph.egg-info
+
 # Ignore python misc.
 __pycache__
