@@ -14,7 +14,9 @@
 # limitations under the License.
 # ----------------------------------------------------------------------------
 
+import uuid
 import wx
+from wx.lib.newevent import NewCommandEvent
 
 from gsnodegraph.node import NodeWire
 from gsnodegraph.constants import *
@@ -22,8 +24,14 @@ from gsnodegraph.constants import *
 from .utils.z_matrix import ZMatrix
 
 
+gsnodegraph_nodeselect_cmd_event, EVT_GSNODEGRAPH_NODESELECT = NewCommandEvent()
+gsnodegraph_nodeconnect_cmd_event, EVT_GSNODEGRAPH_NODECONNECT = NewCommandEvent()
+gsnodegraph_nodedisconnect_cmd_event, EVT_GSNODEGRAPH_NODEDISCONNECT = NewCommandEvent()
+
+
 class NodeGraph(wx.ScrolledCanvas):
     def __init__(self, parent, registry, *args, **kwds):
+        self.parent = parent
         self.matrix = ZMatrix()
         self.identity = ZMatrix()
         self.matrix.Reset()
@@ -192,6 +200,9 @@ class NodeGraph(wx.ScrolledCanvas):
         self._tmp_wire = None
         self._bbox_start = None
         self._bbox_rect = None
+
+        # Update the properties panel
+        self.SendNodeSelectEvent()
 
         # Refresh the nodegraph
         self.UpdateDrawing()
@@ -402,7 +413,7 @@ class NodeGraph(wx.ScrolledCanvas):
             self.UpdateDrawing()
 
     def AddNode(self, idname, pos=(0, 0), location="POSITION"):
-        node = self._noderegistry[idname](self)
+        node = self._noderegistry[idname](self, uuid.uuid4())
         node._Init()
         self._nodes[node._id] = node
         node.pos = wx.Point(pos[0], pos[1])
@@ -427,10 +438,33 @@ class NodeGraph(wx.ScrolledCanvas):
 
         self._wires.append(wire)
 
+        dst_socket.node.EditParameter(dst_socket._label, self._nodes[src_socket.node._id])
+        self.SendNodeConnectEvent()
+
     def DisconnectNodes(self, src_socket, dst_socket):
         for wire in self._wires:
             if wire.srcsocket is src_socket and wire.dstsocket is dst_socket:
                 self._wires.remove(wire)
+
+                wire._dstsocket.node.EditParameter(wire._dstsocket._label, None)
+
+        self.SendNodeDisconnectEvent()
+
+    def SendNodeSelectEvent(self):
+        wx.PostEvent(self, 
+                     gsnodegraph_nodeselect_cmd_event(id=self.GetId(), 
+                     value=self._active_node))
+
+    def SendNodeConnectEvent(self):
+        wx.PostEvent(self, 
+                     gsnodegraph_nodeconnect_cmd_event(id=self.GetId(), 
+                     value=self._active_node))
+
+    def SendNodeDisconnectEvent(self):
+        wx.PostEvent(self, 
+                     gsnodegraph_nodedisconnect_cmd_event(id=self.GetId(), 
+                     value=self._active_node))
+
 
     def SceneMatrixReset(self):
         self.matrix.Reset()
