@@ -18,8 +18,8 @@ from gsnodegraph import NodeBase
 
 
 class OutputNode(NodeBase):
-    def __init__(self, nodegraph):
-        NodeBase.__init__(self, nodegraph)
+    def __init__(self, nodegraph, _id):
+        NodeBase.__init__(self, nodegraph, _id)
 
         self._label = "Output"
         self._isoutput = True
@@ -27,16 +27,16 @@ class OutputNode(NodeBase):
 
 
 class ImageNode(NodeBase):
-    def __init__(self, nodegraph):
-        NodeBase.__init__(self, nodegraph)
+    def __init__(self, nodegraph, _id):
+        NodeBase.__init__(self, nodegraph, _id)
 
         self._label = "Image"
         self._category = "INPUT"
 
 
 class MixNode(NodeBase):
-    def __init__(self, nodegraph):
-        NodeBase.__init__(self, nodegraph)
+    def __init__(self, nodegraph, _id):
+        NodeBase.__init__(self, nodegraph, _id)
 
         self._label = "Mix"
         self._category = "BLEND"
