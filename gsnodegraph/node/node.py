@@ -31,6 +31,7 @@ class NodeBase(object):
         self._active = False
 
         self._sockets = []
+        self._parameters = {}
 
         self._isoutput = False
         self._label = ""
@@ -81,9 +82,6 @@ class NodeBase(object):
     def active(self, active: bool) -> None:
         self._active = active
 
-    def EditParameter(self, idname, value):
-        pass
-
     def AddSocket(self, label, color, direction):
         self.ArrangeSockets()
 
@@ -109,7 +107,7 @@ class NodeBase(object):
         ins = []
         outs = []
 
-        for param in ["Image", "Image"]:
+        for param in self._parameters:
             ins.append((param, "RENDERIMAGE"))
 
         if self.IsOutputNode() != True:
