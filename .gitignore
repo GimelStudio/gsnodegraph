@@ -3,6 +3,7 @@
 build
 dist
 gsnodegraph.egg-info
+pypi.txt
 
 # Ignore python misc.
 __pycache__
