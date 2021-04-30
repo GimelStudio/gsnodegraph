@@ -22,9 +22,9 @@ from ..constants import *
 
 
 class NodeBase(object):
-    def __init__(self, nodegraph):
+    def __init__(self, nodegraph, _id):
         self._nodegraph = nodegraph
-        self._id = uuid.uuid4()
+        self._id = _id
         self._pos = wx.Point(0, 0)
         self._size = wx.Size(NODE_DEFAULT_WIDTH, NODE_DEFAULT_HEIGHT)
         self._selected = False
