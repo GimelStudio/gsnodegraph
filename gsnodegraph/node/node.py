@@ -81,6 +81,9 @@ class NodeBase(object):
     def active(self, active: bool) -> None:
         self._active = active
 
+    def EditParameter(self, idname, value):
+        pass
+
     def AddSocket(self, label, color, direction):
         self.ArrangeSockets()
 
