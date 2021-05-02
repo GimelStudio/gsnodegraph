@@ -24,6 +24,9 @@ class OutputNode(NodeBase):
         self._label = "Output"
         self._isoutput = True
         self._category = "OUTPUT"
+        self._parameters = {
+            "Image": None
+        }
 
 
 class ImageNode(NodeBase):
@@ -32,6 +35,9 @@ class ImageNode(NodeBase):
 
         self._label = "Image"
         self._category = "INPUT"
+        self._parameters = {
+            "Image": None
+        }
 
 
 class MixNode(NodeBase):
@@ -40,3 +46,7 @@ class MixNode(NodeBase):
 
         self._label = "Mix"
         self._category = "BLEND"
+        self._parameters = {
+            "Image 1": None,
+            "Image 2": None
+        }
