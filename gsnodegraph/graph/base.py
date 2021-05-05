@@ -27,7 +27,7 @@ from .utils.z_matrix import ZMatrix
 gsnodegraph_nodeselect_cmd_event, EVT_GSNODEGRAPH_NODESELECT = NewCommandEvent()
 gsnodegraph_nodeconnect_cmd_event, EVT_GSNODEGRAPH_NODECONNECT = NewCommandEvent()
 gsnodegraph_nodedisconnect_cmd_event, EVT_GSNODEGRAPH_NODEDISCONNECT = NewCommandEvent()
-
+gsnodegraph_mousezoom_cmd_event, EVT_GSNODEGRAPH_MOUSEZOOM = NewCommandEvent()
 
 class NodeGraph(wx.ScrolledCanvas):
     def __init__(self, parent, registry, *args, **kwds):
@@ -38,6 +38,7 @@ class NodeGraph(wx.ScrolledCanvas):
         self.identity.Reset()
         self.previous_position = None
         self._buffer = None
+        self._zoom = 100
 
         self._noderegistry = registry
 
@@ -261,13 +262,25 @@ class NodeGraph(wx.ScrolledCanvas):
         dc.SetBrush(wx.Brush(wx.Colour(100, 100, 100, 56), wx.SOLID))
         dc.DrawRectangle(rect)
 
+    def SetZoomLevel(self, zoom, x=0, y=0):
+        if x == 0:
+            x = self.Size[0]/2
+            y = self.Size[1]/2
+        self.ScenePostScale(zoom, zoom, x, y)
+        self.UpdateZoomValue()
+        self.UpdateDrawing()
+
     def OnMousewheel(self, event):
         rotation = event.GetWheelRotation()
         mouse = event.GetPosition()
         if rotation > 1:
             self.ScenePostScale(1.1, 1.1, mouse[0], mouse[1])
+
         elif rotation < -1:
             self.ScenePostScale(0.9, 0.9, mouse[0], mouse[1])
+
+        self.UpdateZoomValue()
+        self.SendMouseZoomEvent()
         self.UpdateDrawing()
 
     def OnMiddleDown(self, event):
@@ -282,6 +295,9 @@ class NodeGraph(wx.ScrolledCanvas):
     def OnMiddleUp(self, event):
         """ Event that resets the mouse cursor. """
         self.SetCursor(wx.Cursor(wx.CURSOR_ARROW))
+
+    def UpdateZoomValue(self):
+        self._zoom = round(self.GetScaleX() * 100)
 
     def ScrollNodeGraph(self, pos_x, pos_y):
         """ Scrolls the scrollbars to the specified position. """
@@ -465,6 +481,10 @@ class NodeGraph(wx.ScrolledCanvas):
                      gsnodegraph_nodedisconnect_cmd_event(id=self.GetId(), 
                      value=self._active_node))
 
+    def SendMouseZoomEvent(self):
+        wx.PostEvent(self, 
+                     gsnodegraph_mousezoom_cmd_event(id=self.GetId(), 
+                     value=self._zoom))
 
     def SceneMatrixReset(self):
         self.matrix.Reset()
