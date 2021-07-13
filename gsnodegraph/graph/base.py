@@ -432,7 +432,13 @@ class NodeGraph(wx.ScrolledCanvas):
         node = self._noderegistry[idname](self, uuid.uuid4())
         node._Init()
         self._nodes[node._id] = node
-        node.pos = wx.Point(pos[0], pos[1])
+        if location == "CURSOR":
+            node.pos = self.CalcMouseCoords(wx.GetMousePosition())
+        else:
+            node.pos = wx.Point(pos[0], pos[1])
+
+        # Refresh the nodegraph
+        self.UpdateDrawing()
         return node
 
     def PlugHasWire(self, dst_socket):
