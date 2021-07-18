@@ -41,7 +41,7 @@ class NodeBase(object):
     def _Init(self):
         self.InitSockets()
         self.InitHeaderColor()
-        
+
     @property
     def nodegraph(self):
         return self._nodegraph
@@ -91,6 +91,9 @@ class NodeBase(object):
             if socket.HitTest(pos - self.pos):
                 return socket
 
+    def EditParameter(self, idname, value):
+        pass
+
     def IsOutputNode(self):
         return self._isoutput
 
@@ -132,7 +135,7 @@ class NodeBase(object):
 
         self._sockets = sockets
 
-        # Adjust the size of the node to fit 
+        # Adjust the size of the node to fit
         # the amount of sockets the node has.
         self.size[1] = lastcoord
 
