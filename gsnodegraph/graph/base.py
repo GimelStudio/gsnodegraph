@@ -44,7 +44,7 @@ class NodeGraph(wx.ScrolledCanvas):
 
         self._wires = []
         self._nodes = {}
-        
+
         self._selected_nodes = []
         self._active_node = None
 
@@ -54,7 +54,7 @@ class NodeGraph(wx.ScrolledCanvas):
         self._tmp_wire = None
         self._src_node = None
         self._src_socket = None
-        
+
         self._bbox_rect = None
         self._bbox_start = None
 
@@ -70,7 +70,7 @@ class NodeGraph(wx.ScrolledCanvas):
         self.Bind(wx.EVT_MOUSEWHEEL, self.OnMousewheel)
         self.Bind(wx.EVT_MIDDLE_DOWN, self.OnMiddleDown)
         self.Bind(wx.EVT_MIDDLE_UP, self.OnMiddleUp)
-        
+
     def OnPaint(self, event):
         wx.BufferedPaintDC(self, self._buffer)
 
@@ -82,7 +82,7 @@ class NodeGraph(wx.ScrolledCanvas):
     def OnLeftDown(self, event):
         pnt = event.GetPosition()
         winpnt = self.CalcMouseCoords(pnt)
- 
+
         # The node has been clicked
         self._src_node = self.HitTest(winpnt)
         if self._src_node is not None:
@@ -148,7 +148,7 @@ class NodeGraph(wx.ScrolledCanvas):
             self._bbox_start = winpnt
 
             self.DeselectNodes()
-                
+
 
         self._last_pnt = winpnt
 
@@ -229,7 +229,7 @@ class NodeGraph(wx.ScrolledCanvas):
 
         if event.LeftIsDown() and self._src_node != None and event.Dragging():
             if self._src_socket is None:
-                
+
                 # Traslating the selected nodes
                 if self._selected_nodes != []:
                     for node in self._selected_nodes:
@@ -308,7 +308,7 @@ class NodeGraph(wx.ScrolledCanvas):
                     scrollpos_y - pos_y)
 
     def CalcMouseCoords(self, pnt):
-        """ Calculate the mouse coordinates, taking into account 
+        """ Calculate the mouse coordinates, taking into account
         the current scroll position and zoom level. """
         pnt = self.ConvertWindowToScene(self.ConvertCoords(pnt))
         return wx.Point(pnt[0], pnt[1])
@@ -433,12 +433,9 @@ class NodeGraph(wx.ScrolledCanvas):
         node._Init()
         self._nodes[node._id] = node
         if location == "CURSOR":
-            node.pos = self.CalcMouseCoords(wx.GetMousePosition())
+            node.pos = self.CalcMouseCoords(self.ScreenToClient(wx.GetMousePosition()))
         else:
             node.pos = wx.Point(pos[0], pos[1])
-
-        # Refresh the nodegraph
-        self.UpdateDrawing()
         return node
 
     def PlugHasWire(self, dst_socket):
@@ -473,23 +470,23 @@ class NodeGraph(wx.ScrolledCanvas):
         self.SendNodeDisconnectEvent()
 
     def SendNodeSelectEvent(self):
-        wx.PostEvent(self, 
-                     gsnodegraph_nodeselect_cmd_event(id=self.GetId(), 
+        wx.PostEvent(self,
+                     gsnodegraph_nodeselect_cmd_event(id=self.GetId(),
                      value=self._active_node))
 
     def SendNodeConnectEvent(self):
-        wx.PostEvent(self, 
-                     gsnodegraph_nodeconnect_cmd_event(id=self.GetId(), 
+        wx.PostEvent(self,
+                     gsnodegraph_nodeconnect_cmd_event(id=self.GetId(),
                      value=self._active_node))
 
     def SendNodeDisconnectEvent(self):
-        wx.PostEvent(self, 
-                     gsnodegraph_nodedisconnect_cmd_event(id=self.GetId(), 
+        wx.PostEvent(self,
+                     gsnodegraph_nodedisconnect_cmd_event(id=self.GetId(),
                      value=self._active_node))
 
     def SendMouseZoomEvent(self):
-        wx.PostEvent(self, 
-                     gsnodegraph_mousezoom_cmd_event(id=self.GetId(), 
+        wx.PostEvent(self,
+                     gsnodegraph_mousezoom_cmd_event(id=self.GetId(),
                      value=self._zoom))
 
     def SceneMatrixReset(self):
