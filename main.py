@@ -14,8 +14,11 @@
 # limitations under the License.
 # ----------------------------------------------------------------------------
 
-import wx
+import os
+import sys
+import platform
 
+import wx
 from gsnodegraph import NodeGraph
 from nodes import OutputNode, MixNode, ImageNode
 
@@ -24,6 +27,30 @@ try:
     ctypes.windll.shcore.SetProcessDpiAwareness(True)
 except Exception:
     pass
+
+# Install a custom displayhook to keep Python from setting the global
+# _ (underscore) to the value of the last evaluated expression.
+# If we don't do this, our mapping of _ to gettext can get overwritten.
+# This is useful/needed in interactive debugging with PyShell.
+def _displayHook(obj):
+    """ Custom display hook to prevent Python stealing '_'. """
+
+    if obj is not None:
+        print(repr(obj))
+
+# Add translation macro to builtin similar to what gettext does.
+import builtins
+builtins.__dict__['_'] = wx.GetTranslation
+
+
+class MainApp(wx.App):
+
+    def OnInit(self):
+
+        # Work around for Python stealing "_".
+        sys.displayhook = _displayHook
+
+        return True
 
 
 class MyFrame(wx.Frame):
@@ -45,7 +72,6 @@ class MyFrame(wx.Frame):
         node3 = ng.AddNode('mix_node', wx.Point(400, 100))
         node4 = ng.AddNode('output_node', wx.Point(300, 270))
 
-
         self.Maximize(True)
 
         self.Bind(wx.EVT_CLOSE, self.OnDestroy)
@@ -54,11 +80,9 @@ class MyFrame(wx.Frame):
         self.Destroy()
 
 
-
 if __name__ == '__main__':
-    app = wx.App(redirect=False)
+    app = MainApp()
     frame = MyFrame(None, size=(512, 512))
     frame.SetTitle('GS Nodegraph')
     frame.Show()
     app.MainLoop()
-

@@ -334,28 +334,33 @@ class NodeGraph(wx.ScrolledCanvas):
             if self._active_node.IsOutputNode() != True:
                 duplicate_menuitem = flatmenu.FlatMenuItem(self.context_menu,
                                                            ID_CONTEXTMENU_DUPLICATENODE,
-                                                           "Duplicate\tShift+D", "", wx.ITEM_NORMAL)
+                                                           "{0}{1}".format(_("Duplicate"), "\tShift+D"), "",
+                                                           wx.ITEM_NORMAL)
                 self.context_menu.AppendItem(duplicate_menuitem)
                 delete_menuitem = flatmenu.FlatMenuItem(self.context_menu,
                                                         ID_CONTEXTMENU_DELETENODE,
-                                                        "Delete\tDel", "", wx.ITEM_NORMAL)
+                                                        "{0}{1}".format(_("Delete"), "\tDel"), "",
+                                                        wx.ITEM_NORMAL)
                 self.context_menu.AppendItem(delete_menuitem)
 
         else:
             if self._selected_nodes != []:
                 deletenodes_menuitem = flatmenu.FlatMenuItem(self.context_menu,
                                                              ID_CONTEXTMENU_DELETENODES,
-                                                             "Delete Selected\tDel", "", wx.ITEM_NORMAL)
+                                                             "{0}{1}".format(_("Delete Selected"), "\tDel"), "",
+                                                             wx.ITEM_NORMAL)
                 self.context_menu.AppendItem(deletenodes_menuitem)
 
         selectallnodes_menuitem = flatmenu.FlatMenuItem(self.context_menu,
                                                         ID_CONTEXTMENU_SELECTALLNODES,
-                                                        "Select All", "", wx.ITEM_NORMAL)
+                                                        "Select All", "",
+                                                        wx.ITEM_NORMAL)
         self.context_menu.AppendItem(selectallnodes_menuitem)
 
         deselectallnodes_menuitem = flatmenu.FlatMenuItem(self.context_menu,
                                                           ID_CONTEXTMENU_DESELECTALLNODES,
-                                                          "Deselect All", "", wx.ITEM_NORMAL)
+                                                          "Deselect All", "",
+                                                          wx.ITEM_NORMAL)
         self.context_menu.AppendItem(deselectallnodes_menuitem)
 
 
