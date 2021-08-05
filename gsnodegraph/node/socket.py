@@ -21,7 +21,7 @@ from ..constants import *
 
 
 class NodeSocket(object):
-    """ Node socket showing the datatypes and flow of the node 
+    """ Node socket showing the datatypes and flow of the node
     relative to the graph. """
     def __init__(self, label, datatype, node):
         #self._id = wx.NewIdRef()
@@ -88,6 +88,9 @@ class NodeSocket(object):
     @datatype.setter
     def datatype(self, datatype):
         self._datatype = datatype
+
+    def GetWires(self):
+        return self._wires
 
     def CurrentSocketPos(self):
         """ Return the current coords of the node socket. """

@@ -25,6 +25,7 @@ class NodeBase(object):
     def __init__(self, nodegraph, _id):
         self._nodegraph = nodegraph
         self._id = _id
+        self._idname = None
         self._pos = wx.Point(0, 0)
         self._size = wx.Size(NODE_DEFAULT_WIDTH, NODE_DEFAULT_HEIGHT)
         self._selected = False
@@ -38,9 +39,10 @@ class NodeBase(object):
         self._category = "INPUT"
         self._headercolor = "#fff"
 
-    def _Init(self):
+    def _Init(self, idname):
         self.InitSockets()
         self.InitHeaderColor()
+        self.SetIdName(idname)
 
     @property
     def nodegraph(self):
@@ -113,7 +115,7 @@ class NodeBase(object):
         for param in self._parameters:
             ins.append((param, "RENDERIMAGE"))
 
-        if self.IsOutputNode() != True:
+        if self.IsOutputNode() is not True:
             outs = [('Output', "RENDERIMAGE")]
 
         x, y = self.pos
@@ -139,6 +141,11 @@ class NodeBase(object):
         # the amount of sockets the node has.
         self.size[1] = lastcoord
 
+    def GetIdname(self):
+        return self._idname
+
+    def SetIdName(self, idname):
+        self._idname = idname
 
     def GetPosition(self):
         return self.pos
@@ -163,6 +170,9 @@ class NodeBase(object):
 
     def SetActive(self, active=True):
         self.active = active
+
+    def GetSockets(self):
+        return self._sockets
 
     def Draw(self, dc):
         x, y = self.GetPosition()

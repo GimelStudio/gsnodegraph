@@ -16,6 +16,7 @@
 
 import uuid
 import wx
+import wx.lib.agw.flatmenu as flatmenu
 from wx.lib.newevent import NewCommandEvent
 
 from gsnodegraph.node import NodeWire
@@ -23,11 +24,17 @@ from gsnodegraph.constants import *
 
 from .utils.z_matrix import ZMatrix
 
-
 gsnodegraph_nodeselect_cmd_event, EVT_GSNODEGRAPH_NODESELECT = NewCommandEvent()
 gsnodegraph_nodeconnect_cmd_event, EVT_GSNODEGRAPH_NODECONNECT = NewCommandEvent()
 gsnodegraph_nodedisconnect_cmd_event, EVT_GSNODEGRAPH_NODEDISCONNECT = NewCommandEvent()
 gsnodegraph_mousezoom_cmd_event, EVT_GSNODEGRAPH_MOUSEZOOM = NewCommandEvent()
+
+ID_CONTEXTMENU_DELETENODE = wx.NewIdRef()
+ID_CONTEXTMENU_DELETENODES = wx.NewIdRef()
+ID_CONTEXTMENU_DUPLICATENODE = wx.NewIdRef()
+ID_CONTEXTMENU_DESELECTALLNODES = wx.NewIdRef()
+ID_CONTEXTMENU_SELECTALLNODES = wx.NewIdRef()
+
 
 class NodeGraph(wx.ScrolledCanvas):
     def __init__(self, parent, registry, *args, **kwds):
@@ -61,6 +68,7 @@ class NodeGraph(wx.ScrolledCanvas):
         kwds["style"] = kwds.get("style", 0) | wx.DEFAULT_FRAME_STYLE
         wx.ScrolledCanvas.__init__(self, parent, *args, **kwds)
 
+        # Event bindings
         self.Bind(wx.EVT_PAINT, self.OnPaint)
         self.Bind(wx.EVT_ERASE_BACKGROUND, lambda x: None)
         self.Bind(wx.EVT_SIZE, self.OnSize)
@@ -71,8 +79,22 @@ class NodeGraph(wx.ScrolledCanvas):
         self.Bind(wx.EVT_MIDDLE_DOWN, self.OnMiddleDown)
         self.Bind(wx.EVT_MIDDLE_UP, self.OnMiddleUp)
 
+        # Context menu bindings
+        self.Bind(wx.EVT_CONTEXT_MENU, self.OnContextMenu)
+        self.Bind(wx.EVT_MENU, self.OnDeleteNode,
+                          id=ID_CONTEXTMENU_DELETENODE)
+        self.Bind(wx.EVT_MENU, self.OnDeleteNodes,
+                          id=ID_CONTEXTMENU_DELETENODES)
+        self.Bind(wx.EVT_MENU, self.OnSelectAllNodes,
+                          id=ID_CONTEXTMENU_SELECTALLNODES)
+        self.Bind(wx.EVT_MENU, self.OnDeselectAllNodes,
+                          id=ID_CONTEXTMENU_DESELECTALLNODES)
+        self.Bind(wx.EVT_MENU, self.OnDuplicateNode,
+                          id=ID_CONTEXTMENU_DUPLICATENODE)
+
+
     def OnPaint(self, event):
-        wx.BufferedPaintDC(self, self._buffer)
+        dc = wx.BufferedPaintDC(self, self._buffer)
 
     def OnSize(self, event):
         Size = self.ClientSize
@@ -257,6 +279,86 @@ class NodeGraph(wx.ScrolledCanvas):
 
             self.UpdateDrawing()
 
+    def OnDeleteNodes(self, event):
+        self.DeleteNodes()
+
+    def OnDeleteNode(self, event):
+        if (self._active_node != None and
+            self._active_node.IsOutputNode() != True):
+            self.DeleteNode(self._active_node)
+            self._active_node = None
+
+        # Update the properties panel so that the deleted
+        # nodes' properties are not still shown!
+        self.SendNodeSelectEvent()
+
+        self.UpdateDrawing()
+
+    def OnSelectAllNodes(self, event):
+        """ Event that selects all the nodes in the Node Graph. """
+        for node_id in self._nodes:
+            node = self._nodes[node_id]
+            if node.IsActive() is True:
+                node.SetActive(False)
+            node.SetSelected(True)
+            self._selected_nodes.append(node)
+        self.UpdateDrawing()
+
+    def OnDeselectAllNodes(self, event):
+        """ Event that deselects all the currently selected nodes. """
+        self.DeselectNodes()
+        self.UpdateDrawing()
+
+    def OnDuplicateNode(self, event):
+        """ Event that duplicates the currently selected node. """
+        self.DuplicateNode(self._active_node)
+
+    def OnContextMenu(self, event):
+        # Create the popup menu
+        self.CreateContextMenu()
+
+        # Position it at the mouse cursor
+        pnt = event.GetPosition()
+        self.context_menu.Popup(wx.Point(pnt.x, pnt.y), self)
+
+    def CreateContextMenu(self):
+        self.context_menu = flatmenu.FlatMenu()
+
+        # If there is an active node, then we know
+        # that there shouldn't be any other nodes
+        # selected, thus we handle the active node first.
+        if self._active_node != None:
+
+            # Do not allow the output node to be
+            # deleted or duplicated at all.
+            if self._active_node.IsOutputNode() != True:
+                duplicate_menuitem = flatmenu.FlatMenuItem(self.context_menu,
+                                                           ID_CONTEXTMENU_DUPLICATENODE,
+                                                           "Duplicate\tShift+D", "", wx.ITEM_NORMAL)
+                self.context_menu.AppendItem(duplicate_menuitem)
+                delete_menuitem = flatmenu.FlatMenuItem(self.context_menu,
+                                                        ID_CONTEXTMENU_DELETENODE,
+                                                        "Delete\tDel", "", wx.ITEM_NORMAL)
+                self.context_menu.AppendItem(delete_menuitem)
+
+        else:
+            if self._selected_nodes != []:
+                deletenodes_menuitem = flatmenu.FlatMenuItem(self.context_menu,
+                                                             ID_CONTEXTMENU_DELETENODES,
+                                                             "Delete Selected\tDel", "", wx.ITEM_NORMAL)
+                self.context_menu.AppendItem(deletenodes_menuitem)
+
+        selectallnodes_menuitem = flatmenu.FlatMenuItem(self.context_menu,
+                                                        ID_CONTEXTMENU_SELECTALLNODES,
+                                                        "Select All", "", wx.ITEM_NORMAL)
+        self.context_menu.AppendItem(selectallnodes_menuitem)
+
+        deselectallnodes_menuitem = flatmenu.FlatMenuItem(self.context_menu,
+                                                          ID_CONTEXTMENU_DESELECTALLNODES,
+                                                          "Deselect All", "", wx.ITEM_NORMAL)
+        self.context_menu.AppendItem(deselectallnodes_menuitem)
+
+
     def DrawSelectionBox(self, dc, rect):
         dc.SetPen(wx.Pen(wx.Colour('#C2C2C2'), 2.5, wx.PENSTYLE_SHORT_DASH))
         dc.SetBrush(wx.Brush(wx.Colour(100, 100, 100, 56), wx.SOLID))
@@ -421,16 +523,56 @@ class NodeGraph(wx.ScrolledCanvas):
         for node in self._nodes:
             # Inflate the rect so that the node sockets are
             # highly sensitive to clicks for easier connections.
-            node_rect = self._nodes[node].GetRect().Inflate(8, 8)
+            node_rect = self._nodes[node].GetRect().Inflate(6, 6)
             if mouse_rect.Intersects(node_rect):
                 return self._nodes[node]
 
             # Refresh the nodegraph
             self.UpdateDrawing()
 
+    def DeleteNodes(self):
+        """ Delete the currently selected nodes. This will refuse
+        to delete the Output Composite node though, for obvious reasons.
+        """
+        for node in self._selected_nodes:
+            if node.IsOutputNode() != True:
+                self.DeleteNode(node)
+            else:
+                # In the case that this is an output node, we
+                # want to deselect it, not delete it. :)
+                node.SetSelected(False)
+        self._selected_nodes = []
+
+        if (self._active_node != None and
+           self._active_node.IsOutputNode() != True):
+            self.DeleteNode(self._active_node)
+            self._active_node = None
+
+        # Update the properties panel so that the deleted
+        # nodes' properties are not still shown!
+        self.SendNodeSelectEvent()
+
+        self.UpdateDrawing()
+
+    def DuplicateNode(self, node):
+        """ Duplicates the given ``Node`` object with its properties.
+        :param node: the ``Node`` object to duplicate
+        :returns: the duplicate ``Node`` object
+        """
+        if node.IsOutputNode() is not True:
+            duplicate_node = self.AddNode(
+                node.GetIdname(),
+                location="CURSOR"
+            )
+
+            # TODO: Assign the same properties to the duplicate node object
+
+            self.UpdateDrawing()
+            return duplicate_node
+
     def AddNode(self, idname, pos=(0, 0), location="POSITION"):
         node = self._noderegistry[idname](self, uuid.uuid4())
-        node._Init()
+        node._Init(idname)
         self._nodes[node._id] = node
         if location == "CURSOR":
             node.pos = self.CalcMouseCoords(self.ScreenToClient(wx.GetMousePosition()))
@@ -457,6 +599,9 @@ class NodeGraph(wx.ScrolledCanvas):
 
         self._wires.append(wire)
 
+        src_socket._wires.append(wire)
+        dst_socket._wires.append(wire)
+
         dst_socket.node.EditParameter(dst_socket._label, self._nodes[src_socket.node._id])
         self.SendNodeConnectEvent()
 
@@ -464,10 +609,18 @@ class NodeGraph(wx.ScrolledCanvas):
         for wire in self._wires:
             if wire.srcsocket is src_socket and wire.dstsocket is dst_socket:
                 self._wires.remove(wire)
-
                 wire._dstsocket.node.EditParameter(wire._dstsocket._label, None)
 
         self.SendNodeDisconnectEvent()
+
+    def DeleteNode(self, node):
+        for socket in node.GetSockets():
+            for wire in socket.GetWires():
+                # Clean up any wires that are
+                # connected to this node.
+                self.DisconnectNodes(wire.srcsocket, wire.dstsocket)
+        del self._nodes[node._id]
+        self.UpdateDrawing()
 
     def SendNodeSelectEvent(self):
         wx.PostEvent(self,
