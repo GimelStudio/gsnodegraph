@@ -40,7 +40,7 @@ class MyFrame(wx.Frame):
 
         ng = NodeGraph(self, registry)
 
-        node = ng.AddNode('image_node', wx.Point(100, 10))
+        node1 = ng.AddNode('image_node', wx.Point(100, 10))
         node2 = ng.AddNode('image_node', wx.Point(450, 400))
         node3 = ng.AddNode('mix_node', wx.Point(400, 100))
         node4 = ng.AddNode('output_node', wx.Point(300, 270))
