@@ -93,6 +93,15 @@ class NodeGraph(wx.ScrolledCanvas):
                           id=ID_CONTEXTMENU_DUPLICATENODE)
 
 
+        # Keyboard shortcut bindings
+        self.accel_tbl = wx.AcceleratorTable([(wx.ACCEL_SHIFT, ord('D'),
+                                               ID_CONTEXTMENU_DUPLICATENODE),
+                                              (wx.ACCEL_NORMAL, wx.WXK_DELETE,
+                                               ID_CONTEXTMENU_DELETENODES),
+                                              ])
+        self.parent.SetAcceleratorTable(self.accel_tbl)
+
+
     def OnPaint(self, event):
         dc = wx.BufferedPaintDC(self, self._buffer)
 
