@@ -34,7 +34,7 @@ NODE_CATEGORY_COLORS = {
     "FILTER": "#558333",  # Green
     "BLEND": "#498DB8",  # Light blue
     "COLOR": "#C2AF3A",  # Yellow
-    "DISTORT": "#6B8B8B",  # Blue-Grey
+    "TRANSFORM": "#6B8B8B", # Blue-grey
     "OUTPUT": "#B33641",  # Red
     "DEFAULT": "#975B5B"  # Burgendy
 }

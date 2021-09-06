@@ -36,7 +36,7 @@ class NodeBase(object):
 
         self._isoutput = False
         self._label = ""
-        self._category = "INPUT"
+        self._category = "DEFAULT"
         self._headercolor = "#fff"
 
     def _Init(self, idname):
@@ -96,11 +96,8 @@ class NodeBase(object):
     def EditParameter(self, idname, value):
         pass
 
-    def IsOutputNode(self):
-        return self._isoutput
-
     def InitHeaderColor(self):
-        self._headercolor = NODE_CATEGORY_COLORS[self._category]
+        self._headercolor = NODE_CATEGORY_COLORS[self.GetCategory()]
 
     def InitSockets(self):
         x, y, w, h = self.GetRect()
@@ -141,37 +138,49 @@ class NodeBase(object):
         # the amount of sockets the node has.
         self.size[1] = lastcoord
 
-    def GetIdname(self):
+    def IsOutputNode(self) -> bool:
+        """ Override method to set whether the node is the output or not. """
+        return self._isoutput
+
+    def GetLabel(self) -> str:
+        """ Override method to set the node label. """
+        return self._label
+
+    def GetCategory(self) -> str:
+        """ Override method to set the node category. """
+        return self._category
+
+    def GetIdname(self) -> str:
         return self._idname
 
     def SetIdName(self, idname):
         self._idname = idname
 
-    def GetPosition(self):
+    def GetPosition(self) -> wx.Point:
         return self.pos
 
     def SetPosition(self, x, y):
         self.pos = wx.Point(x, y)
 
-    def GetSize(self):
+    def GetSize(self) -> wx.Size:
         return (self.size[0], self.size[1])
 
-    def GetRect(self):
+    def GetRect(self) -> wx.Rect:
         return wx.Rect(self.pos[0], self.pos[1], self.size[0], self.size[1])
 
-    def IsSelected(self):
+    def IsSelected(self) -> bool:
         return self.selected
 
     def SetSelected(self, selected=True):
         self.selected = selected
 
-    def IsActive(self):
+    def IsActive(self) -> bool:
         return self.active
 
     def SetActive(self, active=True):
         self.active = active
 
-    def GetSockets(self):
+    def GetSockets(self) -> list:
         return self._sockets
 
     def Draw(self, dc):
@@ -195,7 +204,7 @@ class NodeBase(object):
         fnt = self.nodegraph.GetFont()
         dc.SetFont(fnt)
         dc.SetTextForeground(wx.Colour('#fff'))
-        dc.DrawText(self._label, x+10, y+1)
+        dc.DrawText(self.GetLabel(), x+10, y+1)
 
         for socket in self._sockets:
             socket.Draw(dc)
