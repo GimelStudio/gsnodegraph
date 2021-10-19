@@ -506,11 +506,11 @@ class NodeGraph(wx.ScrolledCanvas):
         if self._tmp_wire != None:
             self._tmp_wire.Draw(dc)
 
-        if self._bbox_start != None and self._bbox_rect != None:
-            self.DrawSelectionBox(dc, self._bbox_rect)
-
         for wire in self._wires:
             wire.Draw(dc)
+
+        if self._bbox_start != None and self._bbox_rect != None:
+            self.DrawSelectionBox(dc, self._bbox_rect)
 
     def OnDrawInterface(self, dc):
         pass
