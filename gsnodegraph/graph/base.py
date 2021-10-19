@@ -30,6 +30,8 @@ gsnodegraph_nodedisconnect_cmd_event, EVT_GSNODEGRAPH_NODEDISCONNECT = NewComman
 gsnodegraph_mousezoom_cmd_event, EVT_GSNODEGRAPH_MOUSEZOOM = NewCommandEvent()
 
 ID_CONTEXTMENU_DELETENODE = wx.NewIdRef()
+ID_CONTEXTMENU_MUTENODE = wx.NewIdRef()
+ID_CONTEXTMENU_UNMUTENODE = wx.NewIdRef()
 ID_CONTEXTMENU_DELETENODES = wx.NewIdRef()
 ID_CONTEXTMENU_DUPLICATENODE = wx.NewIdRef()
 ID_CONTEXTMENU_DESELECTALLNODES = wx.NewIdRef()
@@ -83,6 +85,10 @@ class NodeGraph(wx.ScrolledCanvas):
         self.Bind(wx.EVT_CONTEXT_MENU, self.OnContextMenu)
         self.Bind(wx.EVT_MENU, self.OnDeleteNode,
                           id=ID_CONTEXTMENU_DELETENODE)
+        self.Bind(wx.EVT_MENU, self.OnMuteNode,
+                          id=ID_CONTEXTMENU_MUTENODE)
+        self.Bind(wx.EVT_MENU, self.OnUnmuteNode,
+                          id=ID_CONTEXTMENU_UNMUTENODE)
         self.Bind(wx.EVT_MENU, self.OnDeleteNodes,
                           id=ID_CONTEXTMENU_DELETENODES)
         self.Bind(wx.EVT_MENU, self.OnSelectAllNodes,
@@ -92,10 +98,11 @@ class NodeGraph(wx.ScrolledCanvas):
         self.Bind(wx.EVT_MENU, self.OnDuplicateNode,
                           id=ID_CONTEXTMENU_DUPLICATENODE)
 
-
         # Keyboard shortcut bindings
         self.accel_tbl = wx.AcceleratorTable([(wx.ACCEL_SHIFT, ord('D'),
                                                ID_CONTEXTMENU_DUPLICATENODE),
+                                              (wx.ACCEL_SHIFT, ord('M'),
+                                               ID_CONTEXTMENU_MUTENODE),
                                               (wx.ACCEL_NORMAL, wx.WXK_DELETE,
                                                ID_CONTEXTMENU_DELETENODES),
                                               ])
@@ -303,6 +310,14 @@ class NodeGraph(wx.ScrolledCanvas):
 
         self.UpdateDrawing()
 
+    def OnMuteNode(self, event):
+        self._active_node.SetMuted(True)
+        self.UpdateDrawing()
+
+    def OnUnmuteNode(self, event):
+        self._active_node.SetMuted(False)
+        self.UpdateDrawing()
+
     def OnSelectAllNodes(self, event):
         """ Event that selects all the nodes in the Node Graph. """
         for node_id in self._nodes:
@@ -351,6 +366,19 @@ class NodeGraph(wx.ScrolledCanvas):
                                                         "{0}{1}".format(_("Delete"), "\tDel"), "",
                                                         wx.ITEM_NORMAL)
                 self.context_menu.AppendItem(delete_menuitem)
+
+                if self._active_node.IsMuted() is not True:
+                    mute_menuitem = flatmenu.FlatMenuItem(self.context_menu,
+                                                            ID_CONTEXTMENU_MUTENODE,
+                                                            "{0}{1}".format(_("Mute"), "\tShift+M"), "",
+                                                            wx.ITEM_NORMAL)
+                    self.context_menu.AppendItem(mute_menuitem)
+                else:
+                    unmute_menuitem = flatmenu.FlatMenuItem(self.context_menu,
+                                                            ID_CONTEXTMENU_UNMUTENODE,
+                                                            _("Unmute"), "",
+                                                            wx.ITEM_NORMAL)
+                    self.context_menu.AppendItem(unmute_menuitem)
 
         else:
             if self._selected_nodes != []:
