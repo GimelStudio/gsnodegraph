@@ -14,7 +14,7 @@ setup(
   author = 'Noah Rahm and contributors',
   author_email = 'correctsyntax@yahoo.com',
   url = 'https://github.com/GimelStudio/gsnodegraph',
-  keywords = ['nodegraph', 'nodes', 'graph', 'node-based'],
+  keywords = ['nodegraph', 'nodes', 'graph', 'node-based', 'widget'],
   install_requires=[
           'wxpython==4.1.1'
       ],
