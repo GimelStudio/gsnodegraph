@@ -14,19 +14,17 @@
 # limitations under the License.
 # ----------------------------------------------------------------------------
 
-import os
 import sys
-import platform
-
 import wx
-from gsnodegraph import NodeGraph
-from nodes import OutputNode, MixNode, ImageNode
-
 import ctypes
 try:
     ctypes.windll.shcore.SetProcessDpiAwareness(True)
 except Exception:
     pass
+
+from gsnodegraph import NodeGraph
+from nodes import OutputNode, MixNode, ImageNode
+
 
 # Install a custom displayhook to keep Python from setting the global
 # _ (underscore) to the value of the last evaluated expression.
@@ -70,7 +68,8 @@ class MyFrame(wx.Frame):
         node1 = ng.AddNode('image_node', wx.Point(100, 10))
         node2 = ng.AddNode('image_node', wx.Point(450, 400))
         node3 = ng.AddNode('mix_node', wx.Point(400, 100))
-        node4 = ng.AddNode('output_node', wx.Point(300, 270))
+        node4 = ng.AddNode('mix_node', wx.Point(700, 100))
+        node5 = ng.AddNode('output_node', wx.Point(800, 270))
 
         self.Maximize(True)
 
@@ -83,6 +82,6 @@ class MyFrame(wx.Frame):
 if __name__ == '__main__':
     app = MainApp()
     frame = MyFrame(None, size=(512, 512))
-    frame.SetTitle('GS Nodegraph')
+    frame.SetTitle('GS Nodegraph Demo')
     frame.Show()
     app.MainLoop()
