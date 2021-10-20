@@ -30,6 +30,7 @@ class NodeBase(object):
         self._size = wx.Size(NODE_DEFAULT_WIDTH, NODE_DEFAULT_HEIGHT)
         self._selected = False
         self._active = False
+        self._muted = False
 
         self._sockets = []
         self._parameters = {}
@@ -83,6 +84,14 @@ class NodeBase(object):
     @active.setter
     def active(self, active: bool) -> None:
         self._active = active
+
+    @property
+    def muted(self) -> bool:
+        return self._muted
+
+    @muted.setter
+    def muted(self, muted: bool) -> None:
+        self._muted = muted
 
     def AddSocket(self, label, color, direction):
         self.ArrangeSockets()
@@ -180,6 +189,12 @@ class NodeBase(object):
     def SetActive(self, active=True):
         self.active = active
 
+    def IsMuted(self):
+        return self.muted
+
+    def SetMuted(self, muted=True):
+        self.muted = muted
+
     def GetSockets(self) -> list:
         return self._sockets
 
@@ -192,18 +207,30 @@ class NodeBase(object):
             dc.SetPen(wx.Pen(wx.Colour(255, 255, 255, 255), 2))
         else:
             dc.SetPen(wx.Pen(wx.Colour(31, 31, 31, 255), 2))
-        dc.SetBrush(wx.Brush(wx.Colour(65, 65, 65, 255)))
-        dc.DrawRoundedRectangle(x, y, w, h, 4)
+        if self.IsMuted():
+            color = wx.Colour(70, 70, 70, 90)
+        else:
+            color = wx.Colour(70, 70, 70, 255)
+        dc.SetBrush(wx.Brush(color))
+        dc.DrawRoundedRectangle(x, y, w, h, 3)
 
         # Node header and title
         dc.SetPen(wx.Pen(wx.TRANSPARENT_PEN))
-        dc.SetBrush(wx.Brush(wx.Colour(self._headercolor)))
-        dc.DrawRoundedRectangle(x+1, y+1, w-3, 20, 3)
+        if self.IsMuted():
+            color = wx.Colour(70, 70, 70, 255)
+        else:
+            color = wx.Colour(self._headercolor)
+        dc.SetBrush(wx.Brush(color))
+        dc.DrawRoundedRectangle(x+1, y+1, w-3, 12, 2)
         dc.DrawRectangle(x+1, y+10, w-3, 12)
 
         fnt = self.nodegraph.GetFont()
         dc.SetFont(fnt)
-        dc.SetTextForeground(wx.Colour('#fff'))
+        if self.IsMuted():
+            color = wx.Colour('#fff').ChangeLightness(60)
+        else:
+            color = wx.Colour('#fff').ChangeLightness(90)
+        dc.SetTextForeground(color)
         dc.DrawText(self.GetLabel(), x+10, y+1)
 
         for socket in self._sockets:
