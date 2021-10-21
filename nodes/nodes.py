@@ -35,9 +35,7 @@ class ImageNode(NodeBase):
 
         self._label = "Image"
         self._category = "INPUT"
-        self._parameters = {
-            "Image": None
-        }
+        self._parameters = {}
 
 
 class MixNode(NodeBase):
@@ -47,6 +45,30 @@ class MixNode(NodeBase):
         self._label = "Mix"
         self._category = "BLEND"
         self._parameters = {
+            "Image 1": None,
+            "Image 2": None
+        }
+
+
+class BlurNode(NodeBase):
+    def __init__(self, nodegraph, _id):
+        NodeBase.__init__(self, nodegraph, _id)
+
+        self._label = "Blur"
+        self._category = "FILTER"
+        self._parameters = {
+            "Image": None,
+        }
+
+
+class BlendNode(NodeBase):
+    def __init__(self, nodegraph, _id):
+        NodeBase.__init__(self, nodegraph, _id)
+
+        self._label = "Blend"
+        self._category = "BLEND"
+        self._parameters = {
+            "Alpha Mask": None,
             "Image 1": None,
             "Image 2": None
         }

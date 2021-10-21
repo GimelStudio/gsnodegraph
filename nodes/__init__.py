@@ -1,1 +1,1 @@
-from .nodes import OutputNode, MixNode, ImageNode
+from .nodes import OutputNode, MixNode, ImageNode, BlurNode, BlendNode

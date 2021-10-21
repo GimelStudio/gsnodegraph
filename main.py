@@ -23,7 +23,7 @@ except Exception:
     pass
 
 from gsnodegraph import NodeGraph
-from nodes import OutputNode, MixNode, ImageNode
+from nodes import OutputNode, MixNode, ImageNode, BlurNode, BlendNode
 
 
 # Install a custom displayhook to keep Python from setting the global
@@ -60,6 +60,8 @@ class MyFrame(wx.Frame):
         registry = {
             'image_node': ImageNode,
             'mix_node': MixNode,
+            'blur_node': BlurNode,
+            'blend_node': BlendNode,
             'output_node': OutputNode
         }
 
@@ -68,8 +70,9 @@ class MyFrame(wx.Frame):
         node1 = ng.AddNode('image_node', wx.Point(100, 10))
         node2 = ng.AddNode('image_node', wx.Point(450, 400))
         node3 = ng.AddNode('mix_node', wx.Point(400, 100))
-        node4 = ng.AddNode('mix_node', wx.Point(700, 100))
-        node5 = ng.AddNode('output_node', wx.Point(800, 270))
+        node4 = ng.AddNode('blur_node', wx.Point(700, 100))
+        node5 = ng.AddNode('blend_node', wx.Point(720, 300))
+        node6 = ng.AddNode('output_node', wx.Point(1000, 290))
 
         self.Maximize(True)
 
