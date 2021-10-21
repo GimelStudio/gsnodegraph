@@ -117,7 +117,7 @@ class NodeSocket(object):
         final = self.CurrentSocketPos()
 
         # Set color
-        dc.SetPen(wx.Pen(wx.Colour("#2B2B2B"), 2))
+        dc.SetPen(wx.Pen(wx.Colour("#2B2B2B"), 1))
         dc.SetBrush(wx.Brush(wx.Colour(self.color), wx.SOLID))
 
         # Draw the socket

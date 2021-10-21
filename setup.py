@@ -6,7 +6,8 @@ setup(
   packages = ['gsnodegraph',
               'gsnodegraph.graph',
               'gsnodegraph.graph.utils',
-              'gsnodegraph.node'],
+              'gsnodegraph.node',
+              'gsnodegraph.assets'],
   version = '0.2.8',
   license='Apache 2.0',
   description = 'Powerful nodegraph widget for wxpython GUIs',
@@ -31,4 +32,3 @@ setup(
     'Programming Language :: Python :: 3.9',
   ],
 )
-

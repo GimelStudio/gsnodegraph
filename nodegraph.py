@@ -24,4 +24,4 @@ class NodeGraph(NodeGraphBase):
     def __init__(self, parent, registry, **kwds):
         NodeGraphBase.__init__(self, parent, **kwds)
 
-    
+        # Do your custom stuff and overrides here

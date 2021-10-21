@@ -14,7 +14,7 @@
 # limitations under the License.
 # ----------------------------------------------------------------------------
 
-SOCKET_RADIUS = 6
+SOCKET_RADIUS = 5
 SOCKET_HIT_RADIUS = 10
 
 SOCKET_INPUT = 0
@@ -26,7 +26,7 @@ SOCKET_DATATYPES = {
 }
 
 NODE_CATEGORY_COLORS = {
-    "INPUT": "#975B5B",  # Burgendy
+    "INPUT": "#E64555",  # Burgendy
     "DRAW": "#AF4467",  # Pink
     "MASK": "#084D4D",  # Blue-green
     "CONVERT": "#564B7C",  # Purple
@@ -41,3 +41,5 @@ NODE_CATEGORY_COLORS = {
 
 NODE_DEFAULT_WIDTH = 136
 NODE_DEFAULT_HEIGHT = 150
+NODE_THUMB_PADDING = 16
+NODE_Y_PADDING = 10
