@@ -211,13 +211,13 @@ class NodeGraph(wx.ScrolledCanvas):
                 dst_socket = dst_node.HitTest(winpnt)
 
                 # Make sure not to allow the same datatype or
-                # 'plug type' of sockets to be connected!
+                # 'socket type' of sockets to be connected!
                 if dst_socket is not None:
                     if self._src_socket._direction != dst_socket._direction \
                         and self._src_node != dst_node:
 
                         # Only allow a single wire to be connected to any one input.
-                        if self.PlugHasWire(dst_socket) is not True:
+                        if self.SocketHasWire(dst_socket) is not True:
                             self.ConnectNodes(self._src_socket, dst_socket)
 
                         # If there is already a connection,
@@ -622,7 +622,7 @@ class NodeGraph(wx.ScrolledCanvas):
             node.pos = wx.Point(pos[0], pos[1])
         return node
 
-    def PlugHasWire(self, dst_socket):
+    def SocketHasWire(self, dst_socket):
         for wire in self._wires:
             if wire.dstsocket == dst_socket:
                 return True
