@@ -17,26 +17,25 @@
 import math
 import wx
 
-from ..constants import *
+from ..constants import (SOCKET_INPUT, SOCKET_DATATYPES,
+                         SOCKET_HIT_RADIUS, SOCKET_RADIUS)
 
 
 class NodeSocket(object):
-    """ Node socket showing the datatypes and flow of the node
-    relative to the graph. """
+    """ Node socket showing the datatypes and flow of the node relative to
+    the graph. Wires are dropped into the socket to connect nodes. """
     def __init__(self, label, datatype, node):
-        #self._id = wx.NewIdRef()
         self._label = label
         self._node = node
         self._pos = wx.Point(0, 0)
         self._color = "#fff"
         self._direction = SOCKET_INPUT
         self._datatype = datatype
-
         self._wires = []
 
-        self._Init()
+        self._InitSocket()
 
-    def _Init(self):
+    def _InitSocket(self):
         """ Routine methods for initilizing the socket. """
         self.SetColorByDataType(self.datatype)
         self.SetTopLevelDC()
@@ -116,7 +115,7 @@ class NodeSocket(object):
         """ Draw the node socket. """
         final = self.CurrentSocketPos()
 
-        # Set color
+        # Set the socket color
         dc.SetPen(wx.Pen(wx.Colour("#2B2B2B"), 1))
         dc.SetBrush(wx.Brush(wx.Colour(self.color), wx.SOLID))
 
@@ -125,10 +124,11 @@ class NodeSocket(object):
 
         w, h = self.tdc.GetTextExtent(self.label)
 
-        # socket label margin
+        # Socket label margin
         if self.direction == SOCKET_INPUT:
             x = final.x + 12
         else:
             x = final.x - w - 12
 
+        # Draw the label
         dc.DrawText(self.label, x, final.y - h / 2)

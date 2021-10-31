@@ -16,6 +16,8 @@
 
 import wx
 
+from ..constants import WIRE_NORMAL_COLOR, WIRE_ACTIVE_COLOR
+
 
 class NodeWire(object):
     """ Wire for showing a connection between two nodes. """
@@ -104,7 +106,6 @@ class NodeWire(object):
         return rect.Inflate(2, 2)
 
     def Draw(self, dc):
-        
         # Direction of wire
         sign = 1
         if self.direction == 0:
@@ -115,8 +116,6 @@ class NodeWire(object):
 
         # If the wire has curvature, use a spline
         if self.curvature > 0:
-
-            # Draw wire
             pnts = []
             pnts.append(self.pnt1)
             pnts.append(self.pnt1 + wx.Point(curvature * sign, 0))
@@ -124,15 +123,15 @@ class NodeWire(object):
             pnts.append(self.pnt2)
 
             if self.active is True:
-                dc.SetPen(wx.Pen(wx.Colour("#ECECEC"), 3))
+                dc.SetPen(wx.Pen(wx.Colour(WIRE_ACTIVE_COLOR), 3))
             else:
-                dc.SetPen(wx.Pen(wx.Colour("#808080"), 3))
+                dc.SetPen(wx.Pen(wx.Colour(WIRE_NORMAL_COLOR), 3))
             dc.DrawSpline(pnts)
 
         else:
             # Otherwise, use a line
             if self.active is True:
-                dc.SetPen(wx.Pen(wx.Colour("#ECECEC"), 3))
+                dc.SetPen(wx.Pen(wx.Colour(WIRE_ACTIVE_COLOR), 3))
             else:
-                dc.SetPen(wx.Pen(wx.Colour(wx.Colour("#808080")), 3))
+                dc.SetPen(wx.Pen(wx.Colour(wx.Colour(WIRE_NORMAL_COLOR)), 3))
             dc.DrawLine(self.pnt1[0], self.pnt1[1], self.pnt2[0], self.pnt2[1])
