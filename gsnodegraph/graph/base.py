@@ -210,10 +210,11 @@ class NodeGraph(wx.ScrolledCanvas):
             if dst_node is not None:
                 dst_socket = dst_node.HitTest(winpnt)
 
-                # Make sure not to allow the same datatype or
-                # 'socket type' of sockets to be connected!
+                # Make sure not to allow different datatypes or
+                # the same 'socket type' to be connected!
                 if dst_socket is not None:
                     if self._src_socket._direction != dst_socket._direction \
+                        and self._src_socket._datatype == dst_socket._datatype \
                         and self._src_node != dst_node:
 
                         # Only allow a single wire to be connected to any one input.
@@ -644,14 +645,14 @@ class NodeGraph(wx.ScrolledCanvas):
         src_socket._wires.append(wire)
         dst_socket._wires.append(wire)
 
-        dst_socket.node.EditParameter(dst_socket._label, self._nodes[src_socket.node._id])
+        dst_socket.node.EditParameter(dst_socket._idname, self._nodes[src_socket.node._id])
         self.SendNodeConnectEvent()
 
     def DisconnectNodes(self, src_socket, dst_socket):
         for wire in self._wires:
             if wire.srcsocket is src_socket and wire.dstsocket is dst_socket:
                 self._wires.remove(wire)
-                wire._dstsocket.node.EditParameter(wire._dstsocket._label, None)
+                wire._dstsocket.node.EditParameter(wire._dstsocket._idname, None)
 
         self.SendNodeDisconnectEvent()
 

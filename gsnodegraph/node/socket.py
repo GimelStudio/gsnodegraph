@@ -24,14 +24,16 @@ from ..constants import (SOCKET_INPUT, SOCKET_DATATYPES,
 class NodeSocket(object):
     """ Node socket showing the datatypes and flow of the node relative to
     the graph. Wires are dropped into the socket to connect nodes. """
-    def __init__(self, label, datatype, node):
+    def __init__(self, label, idname, datatype, node, direction):
         self._label = label
         self._node = node
         self._pos = wx.Point(0, 0)
         self._color = "#fff"
-        self._direction = SOCKET_INPUT
+        self._direction = direction
         self._datatype = datatype
         self._wires = []
+
+        self._idname = idname
 
         self._InitSocket()
 

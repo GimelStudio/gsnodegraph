@@ -104,6 +104,9 @@ class NodeBase(object):
     def expanded(self, expanded: bool) -> None:
         self._expanded = expanded
 
+    def NodeOutputDatatype(self):
+        return "RGBAIMAGE"
+
     def AddSocket(self, label, color, direction) -> None:
         self.ArrangeSockets()
 
@@ -126,25 +129,27 @@ class NodeBase(object):
         self._headercolor = NODE_CATEGORY_COLORS[self.GetCategory()]
 
     def InitSockets(self) -> None:
-        x, y, w, h = self.GetRect()
-        _id = wx.NewIdRef()
-
         sockets = []
         ins = []
         outs = []
 
-        for param in self._parameters:
-            ins.append((param, "RENDERIMAGE"))
+        # Create a list of input sockets with the format:
+        # [(label, idname, datatype), ...]
+        for param_id in self._parameters:
+            param = self._parameters[param_id]
+            ins.append((param.label, param.idname, param.datatype))
 
         if self.IsOutputNode() is not True:
-            outs = [('Output', "RENDERIMAGE")]
+            outs = [('Output', 'Output', self.NodeOutputDatatype())]
 
+        x, y, w, h = self.GetRect()
         x, y = self.pos
         w, h = self.size
+
         for i, p in enumerate(outs + ins):
             socket_type = SOCKET_INPUT  # Socket type IN
             x = 0  # socket margin
-            if (p[0], p[1]) in outs:
+            if (p[0], p[1], p[2]) in outs:
                 x = w - x - 1
                 socket_type = SOCKET_OUTPUT  # Socket type OUT
 
@@ -152,8 +157,8 @@ class NodeBase(object):
             self._lastsocketpos = 60 + 12 * i
 
             # Create the node sockets
-            socket = NodeSocket(p[0], p[1], self)
-            socket.direction = socket_type
+            socket = NodeSocket(label=p[0], idname=p[1], datatype=p[2],
+                                node=self, direction=socket_type)
             socket.pos = wx.Point(x, 40 + (19 * i))
             sockets.append(socket)
 
