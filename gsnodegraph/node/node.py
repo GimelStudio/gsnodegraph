@@ -42,6 +42,9 @@ class NodeBase(object):
         self._category = "DEFAULT"
         self._headercolor = "#fff"
 
+        self._expandicon_bmp = ICON_IMAGE.GetBitmap()
+        self._checkerboard_bmp = ICON_BRUSH_CHECKERBOARD.GetBitmap()
+
     def _Init(self, idname):
         self.InitSockets()
         self.InitHeaderColor()
@@ -283,7 +286,7 @@ class NodeBase(object):
 
         # Expand node thumbnail icon
         self._expandicon_rect = wx.Rect(x+NODE_DEFAULT_WIDTH-24, y+3, 16, 16)
-        dc.DrawBitmap(ICON_IMAGE.GetBitmap(),
+        dc.DrawBitmap(self._expandicon_bmp,
                       self._expandicon_rect[0],
                       self._expandicon_rect[1],
                       True)
@@ -301,5 +304,5 @@ class NodeBase(object):
 
             # Draw thumbnail border and background
             dc.SetPen(wx.Pen(wx.Colour("#2B2B2B"), 1))
-            dc.SetBrush(wx.Brush(ICON_BRUSH_CHECKERBOARD.GetBitmap()))
+            dc.SetBrush(wx.Brush(self._checkerboard_bmp))
             dc.DrawRectangle(thumb_rect)

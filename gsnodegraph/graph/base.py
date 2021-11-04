@@ -46,6 +46,7 @@ class NodeGraph(wx.ScrolledCanvas):
         self.matrix.Reset()
         self.identity.Reset()
         self.previous_position = None
+        self._backgroundimage = None
         self._buffer = None
         self._zoom = 100
 
@@ -501,20 +502,33 @@ class NodeGraph(wx.ScrolledCanvas):
         dc.DrawRectangle(0, 0, self.Size[0], self.Size[1])
 
     def OnDrawScene(self, dc):
-        for node in self._nodes:
-            self._nodes[node].Draw(dc)
+        if self._backgroundimage != None:
+            image = self._backgroundimage
 
+            x = (self.GetSize()[0]/2.0 - image.Width/2.0)
+            y = (self.GetSize()[1]/2.0 - image.Height/2.0)
+            pnt = self.ConvertCoords(wx.Point(x, y))
+            dc.DrawBitmap(image, pnt[0], pnt[1], useMask=False)
+
+        # Draw nodes
+        [self._nodes[node].Draw(dc) for node in self._nodes]
+
+        # Draw temp wire when needed
         if self._tmp_wire != None:
             self._tmp_wire.Draw(dc)
 
-        for wire in self._wires:
-            wire.Draw(dc)
+        # Draw wires
+        [wire.Draw(dc) for wire in self._wires]
 
+        # Draw box selection tool when needed
         if self._bbox_start != None and self._bbox_rect != None:
             self.DrawSelectionBox(dc, self._bbox_rect)
 
     def OnDrawInterface(self, dc):
         pass
+
+    def SetBackgroundImage(self, image):
+        self._backgroundimage = image
 
     def HandleNodeSelection(self):
         # Set the active node
@@ -533,8 +547,7 @@ class NodeGraph(wx.ScrolledCanvas):
         # When a node is active, all the selected nodes
         # need to be set to the unselected state.
         if self._selected_nodes != []:
-            for node in self._selected_nodes:
-                node.SetSelected(False)
+            [node.SetSelected(False) for node in self._selected_nodes]
 
     def BoxSelectHitTest(self, bboxrect):
         """ Hit-test for box selection. """
@@ -551,8 +564,7 @@ class NodeGraph(wx.ScrolledCanvas):
 
     def DeselectNodes(self):
         """ Deselect everything that is selected or active. """
-        for node in self._selected_nodes:
-            node.SetSelected(False)
+        [node.SetSelected(False) for node in self._selected_nodes]
 
         self._selected_nodes = []
 
@@ -603,10 +615,7 @@ class NodeGraph(wx.ScrolledCanvas):
         :returns: the duplicate ``Node`` object
         """
         if node.IsOutputNode() is not True:
-            duplicate_node = self.AddNode(
-                node.GetIdname(),
-                location="CURSOR"
-            )
+            duplicate_node = self.AddNode(node.GetIdname(), location="CURSOR")
 
             # TODO: Assign the same properties to the duplicate node object
 
@@ -659,8 +668,7 @@ class NodeGraph(wx.ScrolledCanvas):
     def DeleteNode(self, node):
         for socket in node.GetSockets():
             for wire in socket.GetWires():
-                # Clean up any wires that are
-                # connected to this node.
+                # Clean up any wires that are connected to this node.
                 self.DisconnectNodes(wire.srcsocket, wire.dstsocket)
         del self._nodes[node._id]
         self.UpdateDrawing()
