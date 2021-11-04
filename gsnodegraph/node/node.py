@@ -292,8 +292,7 @@ class NodeBase(object):
                       True)
 
         # Node sockets
-        for socket in self._sockets:
-            socket.Draw(dc)
+        [socket.Draw(dc) for socket in self._sockets]
 
         # Thumbnail
         if self.IsExpanded():
