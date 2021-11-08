@@ -8,18 +8,18 @@ setup(
               'gsnodegraph.graph.utils',
               'gsnodegraph.node',
               'gsnodegraph.assets'],
-  version = '0.3.1',
-  license='Apache 2.0',
-  description = 'Powerful nodegraph widget for wxPython GUIs',
+  version = '0.3.2',
+  license = 'Apache 2.0',
+  description = 'Powerful node graph widget for wxPython GUIs',
   long_description_content_type="text/markdown",
   author = 'Noah Rahm and contributors',
   author_email = 'correctsyntax@yahoo.com',
   url = 'https://github.com/GimelStudio/gsnodegraph',
   keywords = ['nodegraph', 'nodes', 'graph', 'node-based', 'widget'],
-  install_requires=[
-          'wxpython==4.1.1'
-      ],
-  classifiers=[
+  install_requires = [
+      'wxpython==4.1.1'
+    ],
+  classifiers = [
     'Development Status :: 2 - Pre-Alpha',
     'Intended Audience :: Developers',
     'Operating System :: OS Independent',
