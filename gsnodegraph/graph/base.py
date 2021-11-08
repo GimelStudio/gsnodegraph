@@ -105,7 +105,8 @@ class NodeGraph(wx.ScrolledCanvas):
                                               (wx.ACCEL_SHIFT, ord('M'),
                                                ID_CONTEXTMENU_MUTENODE),
                                               (wx.ACCEL_NORMAL, wx.WXK_DELETE,
-                                               ID_CONTEXTMENU_DELETENODES)])
+                                               ID_CONTEXTMENU_DELETENODES),
+                                              ])
         self.parent.SetAcceleratorTable(self.accel_tbl)
 
 
@@ -123,13 +124,13 @@ class NodeGraph(wx.ScrolledCanvas):
 
         # The node has been clicked
         self._src_node = self.HitTest(winpnt)
-        if self._src_node != None:
+        if self._src_node is not None:
             self.HandleNodeSelection()
 
             # Handle sockets and wires
             self._src_socket = self._src_node.HitTest(winpnt)
 
-            if self._src_socket != None:
+            if self._src_socket is not None:
 
                 # We do not allow connections from anything except
                 # the output socket. If this is an Output socket,
@@ -137,8 +138,14 @@ class NodeGraph(wx.ScrolledCanvas):
                 if self._src_socket._direction == SOCKET_OUTPUT:
                     pnt1 = self._src_node.pos + self._src_socket.pos
 
-                    self._tmp_wire = NodeWire(self, pnt1, winpnt, None, None,
-                                              self._src_socket._direction)
+                    self._tmp_wire = NodeWire(
+                        self,
+                        pnt1,
+                        winpnt,
+                        None,
+                        None,
+                        self._src_socket._direction
+                    )
 
                 # If this is an input socket, we disconnect any already-existing
                 # sockets and connect the new wire. We do not allow disconnections
@@ -163,8 +170,14 @@ class NodeGraph(wx.ScrolledCanvas):
                         pnt1 = self._src_socket._node._pos + self._src_socket._pos
 
                         # Draw the temp wire with the new values
-                        self._tmp_wire = NodeWire(self, pnt1, winpnt, None, None,
-                                                  self._src_socket._direction)
+                        self._tmp_wire = NodeWire(
+                            self,
+                            pnt1,
+                            winpnt,
+                            None,
+                            None,
+                            self._src_socket._direction,
+                        )
 
                         # Important: we re-assign the source node variable
                         self._src_node = self._src_socket._node
@@ -173,8 +186,8 @@ class NodeGraph(wx.ScrolledCanvas):
             # Start the box select bbox
             self._bbox_start = winpnt
 
-            # Deselect all the nodes
             self.DeselectNodes()
+
 
         self._last_pnt = winpnt
 
@@ -195,18 +208,18 @@ class NodeGraph(wx.ScrolledCanvas):
         # Attempt to make a connection
         if self._src_node != None:
             dst_node = self.HitTest(winpnt)
-            if dst_node != None:
+            if dst_node is not None:
                 dst_socket = dst_node.HitTest(winpnt)
 
                 # Make sure not to allow different datatypes or
                 # the same 'socket type' to be connected!
-                if dst_socket != None:
+                if dst_socket is not None:
                     if self._src_socket._direction != dst_socket._direction \
                         and self._src_socket._datatype == dst_socket._datatype \
                         and self._src_node != dst_node:
 
                         # Only allow a single wire to be connected to any one input.
-                        if self.SocketHasWire(dst_socket) != True:
+                        if self.SocketHasWire(dst_socket) is not True:
                             self.ConnectNodes(self._src_socket, dst_socket)
 
                         # If there is already a connection,
@@ -240,22 +253,22 @@ class NodeGraph(wx.ScrolledCanvas):
         winpnt = self.CalcMouseCoords(pnt)
 
         # Draw box selection bbox
-        if event.LeftIsDown() == True:
-            if self._src_node == None and self._bbox_start != None:
+        if event.LeftIsDown() is True:
+            if self._src_node is None and self._bbox_start != None:
                 rect = wx.Rect(topLeft=self._bbox_start, bottomRight=winpnt)
                 self._bbox_rect = rect
                 self.UpdateDrawing()
 
         # If the MMB is down, calculate the scrolling of the graph
-        if event.MiddleIsDown() == True and event.Dragging():
+        if event.MiddleIsDown() is True and event.Dragging():
             dx = (winpnt[0] - self._middle_pnt[0])
-            dy = (winpnt[1] - self._middle_pnt[1])
+            dy  =(winpnt[1] - self._middle_pnt[1])
             self.ScrollNodeGraph(dx, dy)
             self.ScenePostPan(dx, dy)
             self.UpdateDrawing()
 
-        if event.LeftIsDown() == self._src_node != None and event.Dragging():
-            if self._src_socket == None:
+        if event.LeftIsDown() and self._src_node != None and event.Dragging():
+            if self._src_socket is None:
 
                 # Traslating the selected nodes
                 if self._selected_nodes != []:
@@ -347,22 +360,19 @@ class NodeGraph(wx.ScrolledCanvas):
             if self._active_node.IsOutputNode() != True:
                 duplicate_menuitem = flatmenu.FlatMenuItem(self.context_menu,
                                                            ID_CONTEXTMENU_DUPLICATENODE,
-                                                           "{0}{1}".format(_("Duplicate"),
-                                                           "\tShift+D"), "",
+                                                           "{0}{1}".format(_("Duplicate"), "\tShift+D"), "",
                                                            wx.ITEM_NORMAL)
                 self.context_menu.AppendItem(duplicate_menuitem)
                 delete_menuitem = flatmenu.FlatMenuItem(self.context_menu,
                                                         ID_CONTEXTMENU_DELETENODE,
-                                                        "{0}{1}".format(_("Delete"),
-                                                        "\tDel"), "",
+                                                        "{0}{1}".format(_("Delete"), "\tDel"), "",
                                                         wx.ITEM_NORMAL)
                 self.context_menu.AppendItem(delete_menuitem)
 
                 if self._active_node.IsMuted() is not True:
                     mute_menuitem = flatmenu.FlatMenuItem(self.context_menu,
                                                             ID_CONTEXTMENU_MUTENODE,
-                                                            "{0}{1}".format(_("Mute"),
-                                                            "\tShift+M"), "",
+                                                            "{0}{1}".format(_("Mute"), "\tShift+M"), "",
                                                             wx.ITEM_NORMAL)
                     self.context_menu.AppendItem(mute_menuitem)
                 else:
@@ -376,8 +386,7 @@ class NodeGraph(wx.ScrolledCanvas):
             if self._selected_nodes != []:
                 deletenodes_menuitem = flatmenu.FlatMenuItem(self.context_menu,
                                                              ID_CONTEXTMENU_DELETENODES,
-                                                             "{0}{1}".format(_("Delete Selected"),
-                                                             "\tDel"), "",
+                                                             "{0}{1}".format(_("Delete Selected"), "\tDel"), "",
                                                              wx.ITEM_NORMAL)
                 self.context_menu.AppendItem(deletenodes_menuitem)
 
@@ -493,6 +502,7 @@ class NodeGraph(wx.ScrolledCanvas):
         dc.DrawRectangle(0, 0, self.Size[0], self.Size[1])
 
     def OnDrawScene(self, dc):
+        # Draw background
         if self._backgroundimage != None:
             image = self._backgroundimage
 
@@ -502,16 +512,18 @@ class NodeGraph(wx.ScrolledCanvas):
             dc.DrawBitmap(image, pnt[0], pnt[1], useMask=False)
 
         # Draw nodes
-        [self._nodes[node].Draw(dc) for node in self._nodes]
+        for node in self._nodes:
+            self._nodes[node].Draw(dc)
 
-        # Draw temp wire when needed
+        # Draw temporary wires
         if self._tmp_wire != None:
             self._tmp_wire.Draw(dc)
 
         # Draw wires
-        [wire.Draw(dc) for wire in self._wires]
+        for wire in self._wires:
+            wire.Draw(dc)
 
-        # Draw box selection tool when needed
+        # Draw selection box
         if self._bbox_start != None and self._bbox_rect != None:
             self.DrawSelectionBox(dc, self._bbox_rect)
 
@@ -538,7 +550,8 @@ class NodeGraph(wx.ScrolledCanvas):
         # When a node is active, all the selected nodes
         # need to be set to the unselected state.
         if self._selected_nodes != []:
-            [node.SetSelected(False) for node in self._selected_nodes]
+            for node in self._selected_nodes:
+                node.SetSelected(False)
 
     def BoxSelectHitTest(self, bboxrect):
         """ Hit-test for box selection. """
@@ -590,8 +603,7 @@ class NodeGraph(wx.ScrolledCanvas):
         self._selected_nodes = []
 
         if (self._active_node != None and
-            self._active_node.IsOutputNode() != True):
-
+           self._active_node.IsOutputNode() != True):
             self.DeleteNode(self._active_node)
             self._active_node = None
 
@@ -660,7 +672,8 @@ class NodeGraph(wx.ScrolledCanvas):
     def DeleteNode(self, node):
         for socket in node.GetSockets():
             for wire in socket.GetWires():
-                # Clean up any wires that are connected to this node.
+                # Clean up any wires that are
+                # connected to this node.
                 self.DisconnectNodes(wire.srcsocket, wire.dstsocket)
         del self._nodes[node._id]
         self.UpdateDrawing()
