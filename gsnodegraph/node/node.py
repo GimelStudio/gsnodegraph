@@ -267,6 +267,7 @@ class NodeBase(object):
     def UpdateExpandSize(self):
         calc_height = self._lastsocketpos+self._thumbnail.Height+NODE_THUMB_PADDING*2
         self._expandedsize = wx.Size(NODE_DEFAULT_WIDTH, calc_height)
+        self.SetSize(self._expandedsize)
 
     def Draw(self, dc):
         x, y = self.GetPosition()
