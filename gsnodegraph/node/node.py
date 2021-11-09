@@ -124,10 +124,11 @@ class NodeBase(object):
 
     def HitTest(self, pos: wx.Point):
         # Handle expanding the node to show thumbnail hittest
-        icon_rect = self._expandicon_rect.Inflate(8, 8)
-        mouse_rect = wx.Rect(pos[0], pos[1], 2, 2)
-        if mouse_rect.Intersects(icon_rect) and wx.GetMouseState().LeftIsDown():
-            self.ToggleExpand()
+        if self.HasThumbnail():
+            icon_rect = self._expandicon_rect.Inflate(8, 8)
+            mouse_rect = wx.Rect(pos[0], pos[1], 2, 2)
+            if mouse_rect.Intersects(icon_rect) and wx.GetMouseState().LeftIsDown():
+                self.ToggleExpand()
 
         # Handle socket hittest
         for socket in self._sockets:
@@ -192,6 +193,12 @@ class NodeBase(object):
         else:
             self.SetSize(self._normalsize)
 
+    def HasThumbnail(self):
+        if self.NodeOutputDatatype() == "RGBAIMAGE":
+            return True
+        else:
+            return False
+
     def IsOutputNode(self) -> bool:
         """ Override method to set whether the node is the output or not. """
         return self._isoutput
@@ -250,19 +257,21 @@ class NodeBase(object):
         self.expanded = expanded
 
     def ToggleExpand(self) -> None:
-        if self.IsExpanded() is True:
-            self.SetExpanded(False)
-            self.SetSize(self._normalsize)
-        elif self.IsExpanded() is False:
-            self.SetExpanded(True)
-            self.SetSize(self._expandedsize)
+        if self.HasThumbnail():
+            if self.IsExpanded() is True:
+                self.SetExpanded(False)
+                self.SetSize(self._normalsize)
+            elif self.IsExpanded() is False:
+                self.SetExpanded(True)
+                self.SetSize(self._expandedsize)
 
     def GetSockets(self) -> list:
         return self._sockets
 
     def SetThumbnail(self, thumb):
-        self._thumbnail = thumb
-        self.UpdateExpandSize()
+        if self.HasThumbnail():
+            self._thumbnail = thumb
+            self.UpdateExpandSize()
 
     def UpdateExpandSize(self):
         calc_height = self._lastsocketpos+self._thumbnail.Height+NODE_THUMB_PADDING*2
@@ -281,7 +290,7 @@ class NodeBase(object):
         if self.IsMuted():
             color = wx.Colour(70, 70, 70, 90)
         else:
-            color = wx.Colour(70, 70, 70, 255)
+            color = wx.Colour(70, 70, 70, 150)
         dc.SetBrush(wx.Brush(color))
         dc.DrawRoundedRectangle(x, y, w, h, 3)
 
@@ -303,16 +312,17 @@ class NodeBase(object):
         dc.SetTextForeground(color)
         dc.DrawText(self.GetLabel(), x+10, y)
 
-        # Expand node thumbnail icon
-        self._expandicon_rect = wx.Rect(x+NODE_DEFAULT_WIDTH-24, y+3, 16, 16)
-        dc.DrawBitmap(self._expandicon_bmp, self._expandicon_rect[0],
-                      self._expandicon_rect[1], True)
-
         # Node sockets
         [socket.Draw(dc) for socket in self._sockets]
 
+        # Expand node thumbnail icon
+        if self.HasThumbnail():
+            self._expandicon_rect = wx.Rect(x+NODE_DEFAULT_WIDTH-24, y+3, 16, 16)
+            dc.DrawBitmap(self._expandicon_bmp, self._expandicon_rect[0],
+                        self._expandicon_rect[1], True)
+
         # Thumbnail
-        if self.IsExpanded():
+        if self.IsExpanded() and self.HasThumbnail():
             # Calculate the coords for the placement of the thumbnail
             thumb_rect = wx.Rect((x+NODE_THUMB_PADDING/2),
                                   y+self._lastsocketpos+(NODE_Y_PADDING*2),
