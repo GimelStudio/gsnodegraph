@@ -17,8 +17,8 @@
 import math
 import wx
 
-from ..constants import (SOCKET_INPUT, SOCKET_DATATYPES,
-                         SOCKET_HIT_RADIUS, SOCKET_RADIUS)
+from ..constants import (SOCKET_BORDER_COLOR, SOCKET_INPUT, SOCKET_DATATYPE_COLORS,
+                         SOCKET_HIT_RADIUS, SOCKET_RADIUS, SOCKET_BORDER_COLOR)
 
 
 class NodeSocket(object):
@@ -28,7 +28,7 @@ class NodeSocket(object):
         self._label = label
         self._node = node
         self._pos = wx.Point(0, 0)
-        self._color = "#fff"
+        self._color = wx.Colour("#fff")
         self._direction = direction
         self._datatype = datatype
         self._wires = []
@@ -99,7 +99,7 @@ class NodeSocket(object):
 
     def SetColorByDataType(self, datatype):
         """ Set the color based on the datatype. """
-        self.color = SOCKET_DATATYPES[datatype]
+        self.color = wx.Colour(SOCKET_DATATYPE_COLORS[datatype])
 
     def SetTopLevelDC(self):
         self.tdc = wx.WindowDC(wx.GetApp().GetTopWindow())
@@ -118,8 +118,8 @@ class NodeSocket(object):
         final = self.CurrentSocketPos()
 
         # Set the socket color
-        dc.SetPen(wx.Pen(wx.Colour("#2B2B2B"), 1))
-        dc.SetBrush(wx.Brush(wx.Colour(self.color), wx.SOLID))
+        dc.SetPen(wx.Pen(wx.Colour(SOCKET_BORDER_COLOR), 1))
+        dc.SetBrush(wx.Brush(self.color))
 
         # Draw the socket
         dc.DrawCircle(final.x, final.y, SOCKET_RADIUS)

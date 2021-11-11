@@ -1,7 +1,7 @@
 # ----------------------------------------------------------------------------
 # GS Nodegraph Copyright 2019-2021 by Noah Rahm and contributors
 #
-# Licensed under the Apache License, Version 2.0 (the "License");
+# Licensed under the Apache License, Version 2.0 (the "License" ;
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
@@ -14,21 +14,24 @@
 # limitations under the License.
 # ----------------------------------------------------------------------------
 
-SOCKET_RADIUS = 5
-SOCKET_HIT_RADIUS = 10
 
-SOCKET_INPUT = 0
-SOCKET_OUTPUT = 1
-
-SOCKET_DATATYPES = {
+SOCKET_DATATYPE_COLORS = {
     "RGBAIMAGE": "#C6C62D",  # Yellow
     "VALUE": "#A0A0A0",  # Grey
 }
 
+SOCKET_INPUT = 0
+SOCKET_OUTPUT = 1
+
+SOCKET_RADIUS = 5
+SOCKET_HIT_RADIUS = 10
+
+SOCKET_BORDER_COLOR = "#2B2B2B"
+
 WIRE_NORMAL_COLOR = "#808080"
 WIRE_ACTIVE_COLOR = "#ECECEC"
 
-NODE_CATEGORY_COLORS = {
+NODE_HEADER_CATEGORY_COLORS = {
     "INPUT": "#E64555",  # Burgendy
     "DRAW": "#AF4467",  # Pink
     "MASK": "#084D4D",  # Blue-green
@@ -41,8 +44,24 @@ NODE_CATEGORY_COLORS = {
     "OUTPUT": "#B33641",  # Red
     "DEFAULT": "#975B5B"  # Burgendy
 }
+NODE_HEADER_MUTED_COLOR = (70, 70, 70, 255)
 
-NODE_DEFAULT_WIDTH = 136
+NODE_NORMAL_COLOR = (70, 70, 70, 150)
+NODE_SELECTED_COLOR = (70, 70, 70, 150)
+NODE_MUTED_COLOR = (70, 70, 70, 90)
+
+NODE_BORDER_NORMAL_COLOR = (31, 31, 31, 255)
+NODE_BORDER_SELECTED_COLOR = (255, 255, 255, 255)
+
+NODE_THUMB_BORDER_COLOR = (31, 31, 31, 255)
+
+NODE_DEFAULT_WIDTH = 140
 NODE_DEFAULT_HEIGHT = 150
 NODE_THUMB_PADDING = 16
 NODE_Y_PADDING = 10
+
+SELECTION_BOX_BORDER_COLOR = "#C2C2C2"
+SELECTION_BOX_COLOR = (100, 100, 100, 56)
+
+GRAPH_BACKGROUND_COLOR = "#2E2E2E"
+GRAPH_GRID_COLOR = "#282828"

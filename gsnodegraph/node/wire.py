@@ -123,15 +123,17 @@ class NodeWire(object):
             pnts.append(self.pnt2)
 
             if self.active is True:
-                dc.SetPen(wx.Pen(wx.Colour(WIRE_ACTIVE_COLOR), 3))
+                color = WIRE_ACTIVE_COLOR
             else:
-                dc.SetPen(wx.Pen(wx.Colour(WIRE_NORMAL_COLOR), 3))
+                color = WIRE_NORMAL_COLOR
+            dc.SetPen(wx.Pen(wx.Colour(color), 3))
             dc.DrawSpline(pnts)
 
         else:
             # Otherwise, use a line
             if self.active is True:
-                dc.SetPen(wx.Pen(wx.Colour(WIRE_ACTIVE_COLOR), 3))
+                color = WIRE_ACTIVE_COLOR
             else:
-                dc.SetPen(wx.Pen(wx.Colour(wx.Colour(WIRE_NORMAL_COLOR)), 3))
+                color = WIRE_NORMAL_COLOR
+            dc.SetPen(wx.Pen(wx.Colour(color), 3))
             dc.DrawLine(self.pnt1[0], self.pnt1[1], self.pnt2[0], self.pnt2[1])

@@ -18,7 +18,11 @@ import wx
 import uuid
 
 from .socket import NodeSocket
-from ..constants import *
+from ..constants import (NODE_DEFAULT_WIDTH, NODE_DEFAULT_HEIGHT,
+                        NODE_HEADER_MUTED_COLOR, NODE_HEADER_CATEGORY_COLORS,
+                        SOCKET_INPUT, SOCKET_OUTPUT, NODE_THUMB_PADDING, NODE_Y_PADDING,
+                        NODE_NORMAL_COLOR, NODE_MUTED_COLOR, NODE_THUMB_BORDER_COLOR,
+                        NODE_BORDER_NORMAL_COLOR, NODE_BORDER_SELECTED_COLOR)
 from ..assets import (ICON_BRUSH_CHECKERBOARD, ICON_IMAGE)
 
 
@@ -41,7 +45,7 @@ class NodeBase(object):
         self._isoutput = False
         self._label = ""
         self._category = "DEFAULT"
-        self._headercolor = "#fff"
+        self._headercolor = wx.Colour(NODE_HEADER_CATEGORY_COLORS["DEFAULT"])
 
         self._thumbnail = self._CreateEmptyBitmap()
 
@@ -139,7 +143,7 @@ class NodeBase(object):
         pass
 
     def InitHeaderColor(self) -> None:
-        self._headercolor = NODE_CATEGORY_COLORS[self.GetCategory()]
+        self._headercolor = wx.Colour(NODE_HEADER_CATEGORY_COLORS[self.GetCategory()])
 
     def InitSockets(self) -> None:
         sockets = []
@@ -284,24 +288,25 @@ class NodeBase(object):
 
         # Node body and border
         if self.IsSelected() or self.IsActive():
-            dc.SetPen(wx.Pen(wx.Colour(255, 255, 255, 255), 1))
+            border_color = NODE_BORDER_SELECTED_COLOR
         else:
-            dc.SetPen(wx.Pen(wx.Colour(31, 31, 31, 255), 1))
+            border_color = NODE_BORDER_NORMAL_COLOR
         if self.IsMuted():
-            color = wx.Colour(70, 70, 70, 90)
+            node_color = NODE_MUTED_COLOR
         else:
-            color = wx.Colour(70, 70, 70, 150)
-        dc.SetBrush(wx.Brush(color))
+            node_color = NODE_NORMAL_COLOR
+        dc.SetPen(wx.Pen(wx.Colour(border_color), 1))
+        dc.SetBrush(wx.Brush(wx.Colour(node_color)))
         dc.DrawRoundedRectangle(x, y, w, h, 3)
 
         # Node header
         dc.SetPen(wx.Pen(wx.TRANSPARENT_PEN))
         if self.IsMuted():
-            color = wx.Colour(70, 70, 70, 255)
+            color = wx.Colour(NODE_HEADER_MUTED_COLOR)
         else:
             color = wx.Colour(self._headercolor).ChangeLightness(80)
         dc.SetBrush(wx.Brush(color))
-        dc.DrawRoundedRectangle(x+1, y+1, w-2, 12, 2)
+        dc.DrawRoundedRectangle(x+1, y+1, w-2, 12, 3)
         dc.DrawRectangle(x+1, y+10, w-2, 12)
 
         # Node name label
@@ -317,7 +322,7 @@ class NodeBase(object):
 
         # Expand node thumbnail icon
         if self.HasThumbnail():
-            self._expandicon_rect = wx.Rect(x+NODE_DEFAULT_WIDTH-24, y+3, 16, 16)
+            self._expandicon_rect = wx.Rect(x+NODE_DEFAULT_WIDTH-28, y+3, 16, 16)
             dc.DrawBitmap(self._expandicon_bmp, self._expandicon_rect[0],
                         self._expandicon_rect[1], True)
 
@@ -330,7 +335,7 @@ class NodeBase(object):
                                   self._thumbnail.Height)
 
             # Draw thumbnail border and background
-            dc.SetPen(wx.Pen(wx.Colour("#2B2B2B"), 1))
+            dc.SetPen(wx.Pen(wx.Colour(NODE_THUMB_BORDER_COLOR), 1))
             dc.SetBrush(wx.Brush(self._checkerboard_bmp))
             dc.DrawRectangle(thumb_rect)
 
