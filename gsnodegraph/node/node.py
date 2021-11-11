@@ -318,14 +318,14 @@ class NodeBase(object):
         else:
             color = wx.Colour('#fff').ChangeLightness(85)
         dc.SetTextForeground(color)
-        dc.DrawText(self.GetLabel(), x+10, y)
+        dc.DrawText(self.GetLabel(), x+10, y+1)
 
         # Node sockets
         [socket.Draw(dc) for socket in self._sockets]
 
         # Expand node thumbnail icon
         if self.HasThumbnail() == True and self.IsMuted() != True:
-            self._expandicon_rect = wx.Rect(x+NODE_DEFAULT_WIDTH-28, y+3, 16, 16)
+            self._expandicon_rect = wx.Rect(x+NODE_DEFAULT_WIDTH-28, y+4, 16, 16)
             dc.DrawBitmap(self._expandicon_bmp, self._expandicon_rect[0],
                         self._expandicon_rect[1], True)
 
