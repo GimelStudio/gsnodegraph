@@ -16,7 +16,7 @@
 
 """
 Utility script to generate PyEmbeddedImage bitmap icons and write into
-'bitmaps.py' file from images in the bitmaps_source directory.
+'bitmaps.py' file from images in the assets_source directory.
 
 1. Just run this file in-place and an 'bitmaps.py' file should be
 generated.
@@ -29,13 +29,13 @@ from wx.tools import img2py
 
 def PrepareIconCommands(dest_file='bitmaps.py'):
     filelist = []
-    for file in os.listdir("bitmaps_source/"):
+    for file in os.listdir("assets_source/"):
         if file.endswith('.png'):
             filelist.append(file)
 
     commandlines = []
     for icon in filelist:
-        ico_path = "bitmaps_source/{}".format(icon)
+        ico_path = "assets_source/{}".format(icon)
         ico_name = icon.split('.')[0]
         cmd = "-a -n ICON_{} {} {}".format(ico_name, ico_path, dest_file)
         commandlines.append(cmd)

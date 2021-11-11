@@ -20,7 +20,7 @@ import wx.lib.agw.flatmenu as flatmenu
 from wx.lib.newevent import NewCommandEvent
 
 from gsnodegraph.node import NodeWire
-from gsnodegraph.constants import (GRAPH_BACKGROUND_COLOR, GRAPH_GRID_COLOR, SOCKET_OUTPUT,
+from gsnodegraph.constants import (GRAPH_BACKGROUND_COLOR, SOCKET_OUTPUT,
                                    SELECTION_BOX_COLOR, SELECTION_BOX_BORDER_COLOR)
 
 from .utils.z_matrix import ZMatrix
@@ -405,7 +405,7 @@ class NodeGraph(wx.ScrolledCanvas):
 
 
     def DrawSelectionBox(self, dc, rect):
-        dc.SetPen(wx.Pen(wx.Colour(SELECTION_BOX_BORDER_COLOR), 2.5,
+        dc.SetPen(wx.Pen(wx.Colour(SELECTION_BOX_BORDER_COLOR), 2,
                   wx.PENSTYLE_SHORT_DASH))
         dc.SetBrush(wx.Brush(wx.Colour(SELECTION_BOX_COLOR)))
         dc.DrawRectangle(rect)
@@ -500,8 +500,6 @@ class NodeGraph(wx.ScrolledCanvas):
     def OnDrawBackground(self, dc):
         dc.SetBackground(wx.Brush(wx.Colour(GRAPH_BACKGROUND_COLOR)))
         dc.Clear()
-        dc.SetBrush(wx.Brush(wx.Colour(GRAPH_GRID_COLOR), wx.CROSS_HATCH))
-        dc.DrawRectangle(0, 0, self.Size[0], self.Size[1])
 
     def OnDrawScene(self, dc):
         # Draw background

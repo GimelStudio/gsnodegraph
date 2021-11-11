@@ -17,6 +17,8 @@
 import wx
 import uuid
 
+from gsnodegraph.assets.bitmaps import ICON_IMAGE
+
 from .socket import NodeSocket
 from ..constants import (NODE_DEFAULT_WIDTH, NODE_DEFAULT_HEIGHT,
                         NODE_HEADER_MUTED_COLOR, NODE_HEADER_CATEGORY_COLORS,
@@ -48,7 +50,6 @@ class NodeBase(object):
         self._headercolor = wx.Colour(NODE_HEADER_CATEGORY_COLORS["DEFAULT"])
 
         self._thumbnail = self._CreateEmptyBitmap()
-
         self._expandicon_bmp = ICON_IMAGE.GetBitmap()
         self._checkerboard_bmp = ICON_BRUSH_CHECKERBOARD.GetBitmap()
 
@@ -185,7 +186,7 @@ class NodeBase(object):
         # Calculate the normal size of the node to fit
         # the amount of sockets the node has. The expanded size
         # is calculated to be the normal size plus the image thumbnail size.
-        calc_height = self._lastsocketpos+self._thumbnail.Height+NODE_THUMB_PADDING*2
+        calc_height = self._lastsocketpos + self._thumbnail.Height + NODE_THUMB_PADDING * 2
         self._expandedsize = wx.Size(NODE_DEFAULT_WIDTH, calc_height)
 
         self._normalsize = wx.Size(NODE_DEFAULT_WIDTH,
@@ -253,6 +254,8 @@ class NodeBase(object):
 
     def SetMuted(self, muted=True) -> None:
         self.muted = muted
+        self.SetExpanded(False)
+        self.SetSize(self._normalsize)
 
     def IsExpanded(self) -> bool:
         return self.expanded
@@ -278,7 +281,7 @@ class NodeBase(object):
             self.UpdateExpandSize()
 
     def UpdateExpandSize(self):
-        calc_height = self._lastsocketpos+self._thumbnail.Height+NODE_THUMB_PADDING*2
+        calc_height = self._lastsocketpos + self._thumbnail.Height + NODE_THUMB_PADDING * 2
         self._expandedsize = wx.Size(NODE_DEFAULT_WIDTH, calc_height)
         self.SetSize(self._expandedsize)
 
@@ -304,7 +307,7 @@ class NodeBase(object):
         if self.IsMuted():
             color = wx.Colour(NODE_HEADER_MUTED_COLOR)
         else:
-            color = wx.Colour(self._headercolor).ChangeLightness(80)
+            color = wx.Colour(self._headercolor).ChangeLightness(70)
         dc.SetBrush(wx.Brush(color))
         dc.DrawRoundedRectangle(x+1, y+1, w-2, 12, 3)
         dc.DrawRectangle(x+1, y+10, w-2, 12)
@@ -321,7 +324,7 @@ class NodeBase(object):
         [socket.Draw(dc) for socket in self._sockets]
 
         # Expand node thumbnail icon
-        if self.HasThumbnail():
+        if self.HasThumbnail() == True and self.IsMuted() != True:
             self._expandicon_rect = wx.Rect(x+NODE_DEFAULT_WIDTH-28, y+3, 16, 16)
             dc.DrawBitmap(self._expandicon_bmp, self._expandicon_rect[0],
                         self._expandicon_rect[1], True)
