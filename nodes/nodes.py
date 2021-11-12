@@ -124,3 +124,15 @@ class BlendNode(NodeBase):
             "image1_socketid": ImageParam("image1_socketid", "Image"),
             "image2_socketid": ImageParam("image2_socketid", "Image")
         }
+
+
+class ValueNode(NodeBase):
+    """ Example node showing a node with a different datatype output. """
+    def __init__(self, nodegraph, _id):
+        NodeBase.__init__(self, nodegraph, _id)
+
+        self._label = "Value"
+        self._category = "INPUT"
+
+    def NodeOutputDatatype(self):
+        return "VALUE"

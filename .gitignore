@@ -6,3 +6,6 @@ pypi.txt
 
 # Ignore python misc.
 __pycache__
+
+# Ignore test files
+testing.py
