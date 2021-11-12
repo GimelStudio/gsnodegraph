@@ -158,7 +158,15 @@ class NodeBase(object):
             ins.append((param.label, param.idname, param.datatype))
 
         if self.IsOutputNode() is not True:
-            outs = [('Output', 'Output', self.NodeOutputDatatype())]
+            # TODO: eventually, we want to have the ability to edit the label
+            data_type = self.NodeOutputDatatype()
+            if data_type == "RGBAIMAGE":
+                idname = "output_image"
+                label = "Image"
+            else:
+                idname = "output_value"
+                label = "Value"
+            outs = [(label, idname, data_type)]
 
         x, y, w, h = self.GetRect()
         x, y = self.pos
@@ -305,12 +313,17 @@ class NodeBase(object):
         # Node header
         dc.SetPen(wx.Pen(wx.TRANSPARENT_PEN))
         if self.IsMuted():
-            color = wx.Colour(NODE_HEADER_MUTED_COLOR)
+            header_color = wx.Colour(NODE_HEADER_MUTED_COLOR)
+            bottom_color = wx.Colour(NODE_HEADER_MUTED_COLOR).ChangeLightness(80)
         else:
-            color = wx.Colour(self._headercolor).ChangeLightness(70)
-        dc.SetBrush(wx.Brush(color))
-        dc.DrawRoundedRectangle(x+1, y+1, w-2, 12, 3)
-        dc.DrawRectangle(x+1, y+10, w-2, 12)
+            header_color = wx.Colour(self._headercolor).ChangeLightness(70)
+            bottom_color = wx.Colour(self._headercolor).ChangeLightness(55)
+        dc.SetBrush(wx.Brush(header_color))
+        dc.DrawRoundedRectangle(x+1, y+1, w-2, 24, 3)
+
+        # Bottom border of the node header (to cover up the rounded bottom)
+        dc.SetBrush(wx.Brush(bottom_color))
+        dc.DrawRectangle(x+1, y+23, w-2, 2)
 
         # Node name label
         if self.IsMuted():
