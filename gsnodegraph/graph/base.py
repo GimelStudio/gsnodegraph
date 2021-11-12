@@ -120,7 +120,7 @@ class NodeGraph(wx.ScrolledCanvas):
     def OnSize(self, event):
         Size = self.ClientSize
         self._buffer = wx.Bitmap(*Size)
-        self.UpdateDrawing()
+        self.UpdateNodeGraph()
 
     def OnLeftDown(self, event):
         pnt = event.GetPosition()
@@ -158,7 +158,7 @@ class NodeGraph(wx.ScrolledCanvas):
                             self.DisconnectNodes(self._src_socket, dst)
 
                     # Refresh the nodegraph
-                    self.UpdateDrawing()
+                    self.UpdateNodeGraph()
 
                     # Don't allow a wire to be pulled out from an input node
                     if self._src_socket._direction == SOCKET_OUTPUT:
@@ -186,7 +186,7 @@ class NodeGraph(wx.ScrolledCanvas):
         self._last_pnt = winpnt
 
         # Refresh the nodegraph
-        self.UpdateDrawing()
+        self.UpdateNodeGraph()
 
     def OnLeftUp(self, event):
         pnt = event.GetPosition()
@@ -240,7 +240,7 @@ class NodeGraph(wx.ScrolledCanvas):
         self.SendNodeSelectEvent()
 
         # Refresh the nodegraph
-        self.UpdateDrawing()
+        self.UpdateNodeGraph()
 
     def OnMotion(self, event):
         pnt = event.GetPosition()
@@ -251,7 +251,7 @@ class NodeGraph(wx.ScrolledCanvas):
             if self._src_node is None and self._bbox_start != None:
                 rect = wx.Rect(topLeft=self._bbox_start, bottomRight=winpnt)
                 self._bbox_rect = rect
-                self.UpdateDrawing()
+                self.UpdateNodeGraph()
 
         # If the MMB is down, calculate the scrolling of the graph
         if event.MiddleIsDown() is True and event.Dragging():
@@ -259,7 +259,7 @@ class NodeGraph(wx.ScrolledCanvas):
             dy  =(winpnt[1] - self._middle_pnt[1])
             self.ScrollNodeGraph(dx, dy)
             self.ScenePostPan(dx, dy)
-            self.UpdateDrawing()
+            self.UpdateNodeGraph()
 
         if event.LeftIsDown() and self._src_node != None and event.Dragging():
             if self._src_socket is None:
@@ -289,7 +289,7 @@ class NodeGraph(wx.ScrolledCanvas):
                 if winpnt != None:
                     self._tmp_wire.pnt2 = winpnt
 
-            self.UpdateDrawing()
+            self.UpdateNodeGraph()
 
     def OnDeleteNodes(self, event):
         self.DeleteNodes()
@@ -304,15 +304,15 @@ class NodeGraph(wx.ScrolledCanvas):
         # nodes' properties are not still shown!
         self.SendNodeSelectEvent()
 
-        self.UpdateDrawing()
+        self.UpdateNodeGraph()
 
     def OnMuteNode(self, event):
         self._active_node.SetMuted(True)
-        self.UpdateDrawing()
+        self.UpdateNodeGraph()
 
     def OnUnmuteNode(self, event):
         self._active_node.SetMuted(False)
-        self.UpdateDrawing()
+        self.UpdateNodeGraph()
 
     def OnSelectAllNodes(self, event):
         """ Event that selects all the nodes in the Node Graph. """
@@ -322,12 +322,12 @@ class NodeGraph(wx.ScrolledCanvas):
                 node.SetActive(False)
             node.SetSelected(True)
             self._selected_nodes.append(node)
-        self.UpdateDrawing()
+        self.UpdateNodeGraph()
 
     def OnDeselectAllNodes(self, event):
         """ Event that deselects all the currently selected nodes. """
         self.DeselectNodes()
-        self.UpdateDrawing()
+        self.UpdateNodeGraph()
 
     def OnDuplicateNode(self, event):
         """ Event that duplicates the currently selected node. """
@@ -408,7 +408,7 @@ class NodeGraph(wx.ScrolledCanvas):
             y = self.Size[1]/2
         self.ScenePostScale(zoom, zoom, x, y)
         self.UpdateZoomValue()
-        self.UpdateDrawing()
+        self.UpdateNodeGraph()
 
     def OnMousewheel(self, event):
         rotation = event.GetWheelRotation()
@@ -422,7 +422,7 @@ class NodeGraph(wx.ScrolledCanvas):
 
         self.UpdateZoomValue()
         self.SendMouseZoomEvent()
-        self.UpdateDrawing()
+        self.UpdateNodeGraph()
 
     def OnMiddleDown(self, event):
         """ Event that updates the mouse cursor. """
@@ -477,7 +477,7 @@ class NodeGraph(wx.ScrolledCanvas):
         rgn.Offset(x, y)
         return rgn.GetBox()
 
-    def UpdateDrawing(self):
+    def UpdateNodeGraph(self):
         dc = wx.MemoryDC()
         dc.SelectObject(self._buffer)
         dc = wx.GCDC(dc)
@@ -529,7 +529,7 @@ class NodeGraph(wx.ScrolledCanvas):
         # Change existing wires
         for wire in self._wires:
             wire.SetCurvature(curvature)
-        #self.UpdateDrawing()
+        #self.UpdateNodeGraph()
 
     def SetBackgroundImage(self, image):
         self._backgroundimage = image
@@ -587,7 +587,7 @@ class NodeGraph(wx.ScrolledCanvas):
                 return self._nodes[node]
 
             # Refresh the nodegraph
-            self.UpdateDrawing()
+            self.UpdateNodeGraph()
 
     def DeleteNodes(self):
         """ Delete the currently selected nodes. This will refuse
@@ -611,7 +611,7 @@ class NodeGraph(wx.ScrolledCanvas):
         # nodes' properties are not still shown!
         self.SendNodeSelectEvent()
 
-        self.UpdateDrawing()
+        self.UpdateNodeGraph()
 
     def DuplicateNode(self, node):
         """ Duplicates the given ``Node`` object with its properties.
@@ -623,7 +623,7 @@ class NodeGraph(wx.ScrolledCanvas):
 
             # TODO: Assign the same properties to the duplicate node object
 
-            self.UpdateDrawing()
+            self.UpdateNodeGraph()
             return duplicate_node
 
     def AddNode(self, idname, pos=(0, 0), location="POSITION"):
@@ -677,7 +677,7 @@ class NodeGraph(wx.ScrolledCanvas):
                 # connected to this node.
                 self.DisconnectNodes(wire.srcsocket, wire.dstsocket)
         del self._nodes[node._id]
-        self.UpdateDrawing()
+        self.UpdateNodeGraph()
 
     def SendNodeSelectEvent(self):
         wx.PostEvent(self,
