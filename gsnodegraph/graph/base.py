@@ -48,6 +48,7 @@ class NodeGraph(wx.ScrolledCanvas):
         self.matrix.Reset()
         self.identity.Reset()
         self.previous_position = None
+
         self._backgroundimage = None
         self._buffer = None
         self._zoom = 100
