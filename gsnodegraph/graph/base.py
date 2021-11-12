@@ -421,10 +421,13 @@ class NodeGraph(wx.ScrolledCanvas):
     def OnMousewheel(self, event):
         rotation = event.GetWheelRotation()
         mouse = event.GetPosition()
-        if rotation > 1:
+
+        print(self._zoom)
+
+        if rotation > 1 and self._zoom < 310:
             self.ScenePostScale(1.1, 1.1, mouse[0], mouse[1])
 
-        elif rotation < -1:
+        elif rotation < -1 and self._zoom > 60:
             self.ScenePostScale(0.9, 0.9, mouse[0], mouse[1])
 
         self.UpdateZoomValue()
