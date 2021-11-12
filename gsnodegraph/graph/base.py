@@ -21,7 +21,8 @@ from wx.lib.newevent import NewCommandEvent
 
 from gsnodegraph.node import NodeWire
 from gsnodegraph.constants import (GRAPH_BACKGROUND_COLOR, SOCKET_OUTPUT,
-                                   SELECTION_BOX_COLOR, SELECTION_BOX_BORDER_COLOR)
+                                   SELECTION_BOX_COLOR, SELECTION_BOX_BORDER_COLOR,
+                                   DEFAULT_WIRE_CURVATURE)
 
 from .utils.z_matrix import ZMatrix
 
@@ -68,6 +69,8 @@ class NodeGraph(wx.ScrolledCanvas):
 
         self._bbox_rect = None
         self._bbox_start = None
+
+        self._wire_curvature = DEFAULT_WIRE_CURVATURE
 
         kwds["style"] = kwds.get("style", 0) | wx.DEFAULT_FRAME_STYLE
         wx.ScrolledCanvas.__init__(self, parent, *args, **kwds)
@@ -139,14 +142,9 @@ class NodeGraph(wx.ScrolledCanvas):
                 if self._src_socket._direction == SOCKET_OUTPUT:
                     pnt1 = self._src_node.pos + self._src_socket.pos
 
-                    self._tmp_wire = NodeWire(
-                        self,
-                        pnt1,
-                        winpnt,
-                        None,
-                        None,
-                        self._src_socket._direction
-                    )
+                    self._tmp_wire = NodeWire(self, pnt1, winpnt, None, None,
+                                              self._src_socket._direction,
+                                              self._wire_curvature)
 
                 # If this is an input socket, we disconnect any already-existing
                 # sockets and connect the new wire. We do not allow disconnections
@@ -171,14 +169,9 @@ class NodeGraph(wx.ScrolledCanvas):
                         pnt1 = self._src_socket._node._pos + self._src_socket._pos
 
                         # Draw the temp wire with the new values
-                        self._tmp_wire = NodeWire(
-                            self,
-                            pnt1,
-                            winpnt,
-                            None,
-                            None,
-                            self._src_socket._direction,
-                        )
+                        self._tmp_wire = NodeWire(self, pnt1, winpnt, None, None,
+                                                  self._src_socket._direction,
+                                                  self._wire_curvature)
 
                         # Important: we re-assign the source node variable
                         self._src_node = self._src_socket._node
@@ -215,9 +208,9 @@ class NodeGraph(wx.ScrolledCanvas):
                 # Make sure not to allow different datatypes or
                 # the same 'socket type' to be connected!
                 if dst_socket is not None:
-                    if self._src_socket._direction != dst_socket._direction \
-                        and self._src_socket._datatype == dst_socket._datatype \
-                        and self._src_node != dst_node:
+                    if (self._src_socket._direction != dst_socket._direction
+                        and self._src_socket._datatype == dst_socket._datatype
+                        and self._src_node != dst_node):
 
                         # Only allow a single wire to be connected to any one input.
                         if self.SocketHasWire(dst_socket) is not True:
@@ -530,6 +523,14 @@ class NodeGraph(wx.ScrolledCanvas):
     def OnDrawInterface(self, dc):
         pass
 
+    def SetNodeWireCurvature(self, curvature):
+        self._wire_curvature = curvature
+
+        # Change existing wires
+        for wire in self._wires:
+            wire.SetCurvature(curvature)
+        #self.UpdateDrawing()
+
     def SetBackgroundImage(self, image):
         self._backgroundimage = image
 
@@ -602,7 +603,7 @@ class NodeGraph(wx.ScrolledCanvas):
         self._selected_nodes = []
 
         if (self._active_node != None and
-           self._active_node.IsOutputNode() != True):
+            self._active_node.IsOutputNode() != True):
             self.DeleteNode(self._active_node)
             self._active_node = None
 
@@ -646,7 +647,8 @@ class NodeGraph(wx.ScrolledCanvas):
         pt2 = dst_socket._node._pos + dst_socket._pos
         _dir = src_socket._direction
 
-        wire = NodeWire(src_socket, pt1, pt2, src_socket, dst_socket, _dir)
+        wire = NodeWire(src_socket, pt1, pt2, src_socket, dst_socket,
+                        _dir, self._wire_curvature)
         wire.srcnode = src_socket._node
         wire.dstnode = dst_socket._node
         wire._srcsocket = src_socket

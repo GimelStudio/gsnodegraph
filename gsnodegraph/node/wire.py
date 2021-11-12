@@ -21,7 +21,7 @@ from ..constants import WIRE_NORMAL_COLOR, WIRE_ACTIVE_COLOR
 
 class NodeWire(object):
     """ Wire for showing a connection between two nodes. """
-    def __init__(self, parent, pnt1, pnt2, srcsocket, dstsocket, direction):
+    def __init__(self, parent, pnt1, pnt2, srcsocket, dstsocket, direction, curvature):
         self._parent = parent
         self._pnt1 = pnt1
         self._pnt2 = pnt2
@@ -31,7 +31,7 @@ class NodeWire(object):
         self._dstnode = None
 
         self._active = False
-        self._curvature = 8
+        self._curvature = curvature
         self._direction = direction
 
     @property
@@ -97,6 +97,9 @@ class NodeWire(object):
     @direction.setter
     def direction(self, direction):
         self._direction = direction
+
+    def SetCurvature(self, curvature):
+        self.curvature = curvature
 
     def GetRect(self):
         min_x = min(self.pnt1[0], self.pnt2[0])
