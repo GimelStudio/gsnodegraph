@@ -403,7 +403,6 @@ class NodeGraph(wx.ScrolledCanvas):
                                                           wx.ITEM_NORMAL)
         self.context_menu.AppendItem(deselectallnodes_menuitem)
 
-
     def DrawSelectionBox(self, dc, rect):
         dc.SetPen(wx.Pen(wx.Colour(SELECTION_BOX_BORDER_COLOR), 2,
                   wx.PENSTYLE_SHORT_DASH))
@@ -421,8 +420,6 @@ class NodeGraph(wx.ScrolledCanvas):
     def OnMousewheel(self, event):
         rotation = event.GetWheelRotation()
         mouse = event.GetPosition()
-
-        print(self._zoom)
 
         if rotation > 1 and self._zoom < 310:
             self.ScenePostScale(1.1, 1.1, mouse[0], mouse[1])
@@ -553,8 +550,7 @@ class NodeGraph(wx.ScrolledCanvas):
         # When a node is active, all the selected nodes
         # need to be set to the unselected state.
         if self._selected_nodes != []:
-            for node in self._selected_nodes:
-                node.SetSelected(False)
+            [node.SetSelected(False) for node in self._selected_nodes]
 
     def BoxSelectHitTest(self, bboxrect):
         """ Hit-test for box selection. """
@@ -585,7 +581,7 @@ class NodeGraph(wx.ScrolledCanvas):
         for node in self._nodes:
             # Inflate the rect so that the node sockets are
             # highly sensitive to clicks for easier connections.
-            node_rect = self._nodes[node].GetRect().Inflate(6, 6)
+            node_rect = self._nodes[node].GetRect().Inflate(7, 7)
             if mouse_rect.Intersects(node_rect):
                 return self._nodes[node]
 
