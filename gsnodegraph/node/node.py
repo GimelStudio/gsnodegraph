@@ -21,10 +21,10 @@ from gsnodegraph.assets.bitmaps import ICON_IMAGE
 
 from .socket import NodeSocket
 from ..constants import (NODE_DEFAULT_WIDTH, NODE_DEFAULT_HEIGHT,
-                        NODE_HEADER_MUTED_COLOR, NODE_HEADER_CATEGORY_COLORS,
-                        SOCKET_INPUT, SOCKET_OUTPUT, NODE_THUMB_PADDING, NODE_Y_PADDING,
-                        NODE_NORMAL_COLOR, NODE_MUTED_COLOR, NODE_THUMB_BORDER_COLOR,
-                        NODE_BORDER_NORMAL_COLOR, NODE_BORDER_SELECTED_COLOR)
+                         NODE_HEADER_MUTED_COLOR, NODE_HEADER_CATEGORY_COLORS,
+                         SOCKET_INPUT, SOCKET_OUTPUT, NODE_THUMB_PADDING, NODE_Y_PADDING,
+                         NODE_NORMAL_COLOR, NODE_MUTED_COLOR, NODE_THUMB_BORDER_COLOR,
+                         NODE_BORDER_NORMAL_COLOR, NODE_BORDER_SELECTED_COLOR)
 from ..assets import (ICON_BRUSH_CHECKERBOARD, ICON_IMAGE)
 
 
@@ -53,13 +53,13 @@ class NodeBase(object):
         self._expandicon_bmp = ICON_IMAGE.GetBitmap()
         self._checkerboard_bmp = ICON_BRUSH_CHECKERBOARD.GetBitmap()
 
-    def _Init(self, idname):
+    def _Init(self, idname) -> None:
         self.InitSockets()
         self.InitHeaderColor()
         self.InitSize()
         self.SetIdName(idname)
 
-    def _CreateEmptyBitmap(self):
+    def _CreateEmptyBitmap(self) -> wx.Bitmap:
         img = wx.Image(120, 120)
         img.SetMaskColour(0,0,0)
         img.InitAlpha()
@@ -121,13 +121,13 @@ class NodeBase(object):
     def expanded(self, expanded: bool) -> None:
         self._expanded = expanded
 
-    def NodeOutputDatatype(self):
+    def NodeOutputDatatype(self) -> str:
         return "RGBAIMAGE"
 
     def AddSocket(self, label, color, direction) -> None:
         self.ArrangeSockets()
 
-    def HitTest(self, pos: wx.Point):
+    def HitTest(self, pos: wx.Point) -> None:
         # Handle expanding the node to show thumbnail hittest
         if self.HasThumbnail():
             icon_rect = self._expandicon_rect.Inflate(8, 8)
@@ -206,7 +206,7 @@ class NodeBase(object):
         else:
             self.SetSize(self._normalsize)
 
-    def HasThumbnail(self):
+    def HasThumbnail(self) -> bool:
         if self.NodeOutputDatatype() == "RGBAIMAGE":
             return True
         else:
@@ -283,17 +283,17 @@ class NodeBase(object):
     def GetSockets(self) -> list:
         return self._sockets
 
-    def SetThumbnail(self, thumb):
+    def SetThumbnail(self, thumb) -> None:
         if self.HasThumbnail():
             self._thumbnail = thumb
             self.UpdateExpandSize()
 
-    def UpdateExpandSize(self):
+    def UpdateExpandSize(self) -> None:
         calc_height = self._lastsocketpos + self._thumbnail.Height + NODE_THUMB_PADDING * 2
         self._expandedsize = wx.Size(NODE_DEFAULT_WIDTH, calc_height)
         self.SetSize(self._expandedsize)
 
-    def Draw(self, dc):
+    def Draw(self, dc) -> None:
         x, y = self.GetPosition()
         w, h = self.GetSize()
 

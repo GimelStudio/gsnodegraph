@@ -27,12 +27,12 @@ class NodeWire(object):
         self._pnt2 = pnt2
         self._srcsocket = srcsocket
         self._dstsocket = dstsocket
-        self._srcnode = None
-        self._dstnode = None
-
-        self._active = False
         self._curvature = curvature
         self._direction = direction
+
+        self._srcnode = None
+        self._dstnode = None
+        self._active = False
 
     @property
     def parent(self):

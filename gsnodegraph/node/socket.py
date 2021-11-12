@@ -26,6 +26,7 @@ class NodeSocket(object):
     the graph. Wires are dropped into the socket to connect nodes. """
     def __init__(self, label, idname, datatype, node, direction):
         self._label = label
+        self._idname = idname
         self._node = node
         self._pos = wx.Point(0, 0)
         self._color = wx.Colour("#fff")
@@ -33,11 +34,9 @@ class NodeSocket(object):
         self._datatype = datatype
         self._wires = []
 
-        self._idname = idname
-
         self._InitSocket()
 
-    def _InitSocket(self):
+    def _InitSocket(self) -> None:
         """ Routine methods for initilizing the socket. """
         self.SetColorByDataType(self.datatype)
         self.SetTopLevelDC()
@@ -90,21 +89,21 @@ class NodeSocket(object):
     def datatype(self, datatype):
         self._datatype = datatype
 
-    def GetWires(self):
+    def GetWires(self) -> list:
         return self._wires
 
-    def CurrentSocketPos(self):
+    def CurrentSocketPos(self) -> wx.Point:
         """ Return the current coords of the node socket. """
         return self.pos + self.node.pos
 
-    def SetColorByDataType(self, datatype):
+    def SetColorByDataType(self, datatype) -> None:
         """ Set the color based on the datatype. """
         self.color = wx.Colour(SOCKET_DATATYPE_COLORS[datatype])
 
-    def SetTopLevelDC(self):
+    def SetTopLevelDC(self) -> None:
         self.tdc = wx.WindowDC(wx.GetApp().GetTopWindow())
 
-    def HitTest(self, pos):
+    def HitTest(self, pos) -> bool:
         """ Returns True if the node socket was hit. """
         pnt = pos - self.pos
         distance = math.sqrt(math.pow(pnt.x, 2) + math.pow(pnt.y, 2))
@@ -113,24 +112,24 @@ class NodeSocket(object):
         if math.fabs(distance) < SOCKET_HIT_RADIUS:
             return True
 
-    def Draw(self, dc):
+    def Draw(self, dc) -> None:
         """ Draw the node socket. """
-        final = self.CurrentSocketPos()
+        pos = self.CurrentSocketPos()
 
         # Set the socket color
         dc.SetPen(wx.Pen(wx.Colour(SOCKET_BORDER_COLOR), 1))
         dc.SetBrush(wx.Brush(self.color))
 
         # Draw the socket
-        dc.DrawCircle(final.x, final.y, SOCKET_RADIUS)
+        dc.DrawCircle(pos.x, pos.y, SOCKET_RADIUS)
 
         w, h = self.tdc.GetTextExtent(self.label)
 
         # Socket label margin
         if self.direction == SOCKET_INPUT:
-            x = final.x + 12
+            x = pos.x + 12
         else:
-            x = final.x - w - 12
+            x = pos.x - w - 12
 
         # Draw the label
-        dc.DrawText(self.label, x, final.y - h / 2)
+        dc.DrawText(self.label, x, pos.y - h / 2)
