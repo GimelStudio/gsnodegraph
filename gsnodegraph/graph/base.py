@@ -530,7 +530,7 @@ class NodeGraph(wx.ScrolledCanvas):
         # Change existing wires
         for wire in self._wires:
             wire.SetCurvature(curvature)
-        #self.UpdateNodeGraph()
+        # self.UpdateNodeGraph()
 
     def SetBackgroundImage(self, image):
         self._backgroundimage = image

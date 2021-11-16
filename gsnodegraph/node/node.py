@@ -129,10 +129,10 @@ class NodeBase(object):
 
     def HitTest(self, pos: wx.Point) -> None:
         # Handle expanding the node to show thumbnail hittest
-        if self.HasThumbnail():
-            icon_rect = self._expandicon_rect.Inflate(8, 8)
+        if self.HasThumbnail() and wx.GetMouseState().LeftIsDown():
+            icon_rect = self._expandicon_rect.Inflate(10, 10)
             mouse_rect = wx.Rect(pos[0], pos[1], 2, 2)
-            if mouse_rect.Intersects(icon_rect) and wx.GetMouseState().LeftIsDown():
+            if mouse_rect.Intersects(icon_rect):
                 self.ToggleExpand()
 
         # Handle socket hittest
