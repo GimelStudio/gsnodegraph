@@ -23,13 +23,15 @@ from gsnodegraph.node import NodeWire
 from gsnodegraph.constants import (GRAPH_BACKGROUND_COLOR, SOCKET_OUTPUT,
                                    SELECTION_BOX_COLOR, SELECTION_BOX_BORDER_COLOR,
                                    DEFAULT_WIRE_CURVATURE)
-
+from gsnodegraph.assets import ICON_ADD_NODE
 from .utils.z_matrix import ZMatrix
+from .btn import AddNodeBtn
 
 gsnodegraph_nodeselect_cmd_event, EVT_GSNODEGRAPH_NODESELECT = NewCommandEvent()
 gsnodegraph_nodeconnect_cmd_event, EVT_GSNODEGRAPH_NODECONNECT = NewCommandEvent()
 gsnodegraph_nodedisconnect_cmd_event, EVT_GSNODEGRAPH_NODEDISCONNECT = NewCommandEvent()
 gsnodegraph_mousezoom_cmd_event, EVT_GSNODEGRAPH_MOUSEZOOM = NewCommandEvent()
+gsnodegraph_addnodebtn_cmd_event, EVT_GSNODEGRAPH_ADDNODEBTN = NewCommandEvent()
 
 ID_CONTEXTMENU_DELETENODE = wx.NewIdRef()
 ID_CONTEXTMENU_MUTENODE = wx.NewIdRef()
@@ -73,6 +75,9 @@ class NodeGraph(wx.ScrolledCanvas):
 
         self._wire_curvature = DEFAULT_WIRE_CURVATURE
 
+        # Init the add node button
+        self._addnodebtn = AddNodeBtn(self)
+
         kwds["style"] = kwds.get("style", 0) | wx.DEFAULT_FRAME_STYLE
         wx.ScrolledCanvas.__init__(self, parent, *args, **kwds)
 
@@ -113,7 +118,6 @@ class NodeGraph(wx.ScrolledCanvas):
                                                ID_CONTEXTMENU_DELETENODES),
                                               ])
         self.parent.SetAcceleratorTable(self.accel_tbl)
-
 
     def OnPaint(self, event):
         dc = wx.BufferedPaintDC(self, self._buffer)
@@ -183,6 +187,10 @@ class NodeGraph(wx.ScrolledCanvas):
 
             self.DeselectNodes()
 
+            # Update add node button
+            pnt = event.GetPosition()
+            if self.MouseInAddNodeBtn(pnt) is True:
+                self._addnodebtn.SetClicked(True)
 
         self._last_pnt = winpnt
 
@@ -230,6 +238,9 @@ class NodeGraph(wx.ScrolledCanvas):
 
                             self.ConnectNodes(self._src_socket, dst_socket)
 
+            # Update the properties panel
+            self.SendNodeSelectEvent()
+
         # Reset all values
         self._src_node = None
         self._src_socket = None
@@ -237,8 +248,11 @@ class NodeGraph(wx.ScrolledCanvas):
         self._bbox_start = None
         self._bbox_rect = None
 
-        # Update the properties panel
-        self.SendNodeSelectEvent()
+        # Update add node button and send button event if it was clicked
+        pnt = event.GetPosition()
+        if self.MouseInAddNodeBtn(pnt) is True:
+            self._addnodebtn.SetClicked(False)
+            self.SendAddNodeBtnEvent()
 
         # Refresh the nodegraph
         self.UpdateNodeGraph()
@@ -290,6 +304,15 @@ class NodeGraph(wx.ScrolledCanvas):
                 if winpnt != None:
                     self._tmp_wire.pnt2 = winpnt
 
+            self.UpdateNodeGraph()
+
+        else:
+            pnt = event.GetPosition()
+            if self._addnodebtn.IsClicked() is not True:
+                if self.MouseInAddNodeBtn(pnt) is True:
+                    self._addnodebtn.SetFocused(True)
+                else:
+                    self._addnodebtn.SetFocused(False)
             self.UpdateNodeGraph()
 
     def OnDeleteNodes(self, event):
@@ -438,6 +461,9 @@ class NodeGraph(wx.ScrolledCanvas):
         """ Event that resets the mouse cursor. """
         self.SetCursor(wx.Cursor(wx.CURSOR_ARROW))
 
+    def GetNodes(self):
+        return self._nodes
+
     def UpdateZoomValue(self):
         self._zoom = round(self.GetScaleX() * 100)
 
@@ -522,7 +548,12 @@ class NodeGraph(wx.ScrolledCanvas):
             self.DrawSelectionBox(dc, self._bbox_rect)
 
     def OnDrawInterface(self, dc):
-        pass
+        # Calculate the position and draw the add node button
+        padding = 10
+        x = (padding)
+        y = ((self.GetSize()[1] - self._addnodebtn.GetHeight()) - padding)
+        pnt = self.ConvertCoords(wx.Point(x, y))
+        self._addnodebtn.Draw(dc, pnt)
 
     def SetNodeWireCurvature(self, curvature):
         self._wire_curvature = curvature
@@ -587,8 +618,17 @@ class NodeGraph(wx.ScrolledCanvas):
             if mouse_rect.Intersects(node_rect):
                 return self._nodes[node]
 
-            # Refresh the nodegraph
-            self.UpdateNodeGraph()
+        # Refresh the nodegraph
+        self.UpdateNodeGraph()
+
+    def MouseInAddNodeBtn(self, pnt):
+        mouse_rect = wx.Rect(pnt[0], pnt[1], 1, 1)
+        
+        addnodebtn_rect = self._addnodebtn.GetRect()
+        if mouse_rect.Intersects(addnodebtn_rect):
+            return True
+        else:
+            return False
 
     def DeleteNodes(self):
         """ Delete the currently selected nodes. This will refuse
@@ -699,6 +739,11 @@ class NodeGraph(wx.ScrolledCanvas):
         wx.PostEvent(self,
                      gsnodegraph_mousezoom_cmd_event(id=self.GetId(),
                      value=self._zoom))
+
+    def SendAddNodeBtnEvent(self):
+        wx.PostEvent(self,
+                     gsnodegraph_addnodebtn_cmd_event(id=self.GetId(),
+                     value=self._active_node))
 
     def SceneMatrixReset(self):
         self.matrix.Reset()

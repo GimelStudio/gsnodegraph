@@ -22,7 +22,7 @@ try:
 except Exception:
     pass
 
-from gsnodegraph import NodeGraph
+from gsnodegraph import NodeGraph, EVT_GSNODEGRAPH_ADDNODEBTN
 from nodes import OutputNode, MixNode, ImageNode, BlurNode, BlendNode, ValueNode
 
 
@@ -78,7 +78,11 @@ class MyFrame(wx.Frame):
 
         self.Maximize(True)
 
+        ng.Bind(EVT_GSNODEGRAPH_ADDNODEBTN, self.OnAddNodeMenuBtn)
         self.Bind(wx.EVT_CLOSE, self.OnDestroy)
+
+    def OnAddNodeMenuBtn(self, event):
+        print("Open add node menu")
 
     def OnDestroy(self, event):
         self.Destroy()
@@ -87,6 +91,6 @@ class MyFrame(wx.Frame):
 if __name__ == '__main__':
     app = MainApp()
     frame = MyFrame(None, size=(512, 512))
-    frame.SetTitle('GSNodegraph Demo')
+    frame.SetTitle('gsnodegraph demo')
     frame.Show()
     app.MainLoop()
