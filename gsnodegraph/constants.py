@@ -38,13 +38,11 @@ NODE_HEADER_CATEGORY_COLORS = {
     "DRAW": "#AF4467",  # Pink
     "MASK": "#084D4D",  # Blue-green
     "CONVERT": "#564B7C",  # Purple
-    "VALUE": "#CC783D",  # Orange
     "FILTER": "#558333",  # Green
     "BLEND": "#498DB8",  # Light blue
     "COLOR": "#C2AF3A",  # Yellow
     "TRANSFORM": "#6B8B8B", # Blue-grey
-    "OUTPUT": "#B33641",  # Red
-    "DEFAULT": "#975B5B"  # Burgendy
+    "OUTPUT": "#B33641"  # Red
 }
 NODE_HEADER_MUTED_COLOR = (70, 70, 70, 255)
 
