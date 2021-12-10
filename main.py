@@ -22,8 +22,9 @@ try:
 except Exception:
     pass
 
-from gsnodegraph import NodeGraph, EVT_GSNODEGRAPH_ADDNODEBTN
+from gsnodegraph import EVT_GSNODEGRAPH_ADDNODEBTN
 from nodes import OutputNode, MixNode, ImageNode, BlurNode, BlendNode, ValueNode
+from nodegraph import NodeGraph
 
 
 # Install a custom displayhook to keep Python from setting the global
@@ -57,6 +58,7 @@ class MyFrame(wx.Frame):
                  style=wx.DEFAULT_FRAME_STYLE, name='frame'):
         wx.Frame.__init__(self, parent, id, title, pos, size, style, name)
 
+        # Setup the node registry
         registry = {
             'image_nodeid': ImageNode,
             'mix_nodeid': MixNode,
@@ -66,8 +68,10 @@ class MyFrame(wx.Frame):
             'output_nodeid': OutputNode
         }
 
+        # Init the nodegraph
         ng = NodeGraph(self, registry)
 
+        # Add nodes to the node graph
         node1 = ng.AddNode('image_nodeid', wx.Point(100, 10))
         node2 = ng.AddNode('image_nodeid', wx.Point(450, 400))
         node3 = ng.AddNode('mix_nodeid', wx.Point(400, 100))
@@ -76,8 +80,10 @@ class MyFrame(wx.Frame):
         node6 = ng.AddNode('value_nodeid', wx.Point(620, 430))
         node7 = ng.AddNode('output_nodeid', wx.Point(1000, 290))
 
+        # Maximize the window
         self.Maximize(True)
 
+        # Bind events
         ng.Bind(EVT_GSNODEGRAPH_ADDNODEBTN, self.OnAddNodeMenuBtn)
         self.Bind(wx.EVT_CLOSE, self.OnDestroy)
 
