@@ -46,8 +46,8 @@ class NodeBase(object):
 
         self._isoutput = False
         self._label = ""
-        self._category = "DEFAULT"
-        self._headercolor = wx.Colour(NODE_HEADER_CATEGORY_COLORS["DEFAULT"])
+        self._category = "INPUT"
+        self._headercolor = wx.Colour(NODE_HEADER_CATEGORY_COLORS["INPUT"])
 
         self._thumbnail = self._CreateEmptyBitmap()
         self._expandicon_bmp = ICON_IMAGE.GetBitmap()
