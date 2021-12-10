@@ -293,6 +293,15 @@ class NodeBase(object):
         self._expandedsize = wx.Size(NODE_DEFAULT_WIDTH, calc_height)
         self.SetSize(self._expandedsize)
 
+    def FindSocket(self, idname):
+        """ Return the node socket with the given name.
+        :param idname: the socket idname as a string
+        :returns: Socket object
+        """
+        for socket in self.GetSockets():
+            if socket._idname == idname:
+                return socket
+
     def Draw(self, dc) -> None:
         x, y = self.GetPosition()
         w, h = self.GetSize()

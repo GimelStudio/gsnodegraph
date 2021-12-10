@@ -136,6 +136,11 @@ class NodeGraph(wx.ScrolledCanvas):
         if self._src_node is not None:
             self.HandleNodeSelection()
 
+            # If the user CTRL+Clicks a node, connect it to the
+            # output node in place of any other connections.
+            if wx.GetKeyState(wx.WXK_CONTROL) == True:
+                self.SetNodeAsPreview(self._src_node)
+
             # Handle sockets and wires
             self._src_socket = self._src_node.HitTest(winpnt)
 
@@ -166,6 +171,7 @@ class NodeGraph(wx.ScrolledCanvas):
                     self.UpdateNodeGraph()
 
                     # Don't allow a wire to be pulled out from an input node
+                    # AKA: backwards
                     if self._src_socket._direction == SOCKET_OUTPUT:
 
                         # Create the temp wire again
@@ -561,7 +567,6 @@ class NodeGraph(wx.ScrolledCanvas):
         # Change existing wires
         for wire in self._wires:
             wire.SetCurvature(curvature)
-        # self.UpdateNodeGraph()
 
     def SetBackgroundImage(self, image):
         self._backgroundimage = image
@@ -682,6 +687,47 @@ class NodeGraph(wx.ScrolledCanvas):
             if wire.dstsocket == dst_socket:
                 return True
         return False
+
+    def SetNodeAsPreview(self, current_node):
+        """ Connect the given node to the the output node in place
+        of any other connections.
+        :param current_node: NodeBase subclass object
+        """
+        output_node = self.GetOutputNode()
+
+        # We assume there is only one input (for now)
+        output_node_socket = output_node.GetSockets()[0]
+
+        # Disconnect any previous connections
+        wires = output_node_socket.GetWires()
+        for wire in wires:
+            if wire._dstsocket == output_node_socket:
+                dst = wire._dstsocket
+                src = wire._srcsocket
+                self.DisconnectNodes(src, dst)
+
+        # Connect the newly selected node to the output
+        for socket in current_node.GetSockets():
+            if socket._direction == SOCKET_OUTPUT:
+                src_socket = socket
+
+        self.ConnectNodes(src_socket, output_node_socket)
+
+    def GetOutputNode(self):
+        """ Return the output node object. """
+        for node_id in self._nodes:
+            node = self._nodes[node_id]
+            if node.IsOutputNode():
+                return node
+
+    def GetNodeByTypeId(self, type_id):
+        """ Return a node object based on the node type identifier.
+        :param type_id: node type identifier
+        :returns: NodeBase subclass object
+        """
+        for node_id in self.GetNodes():
+            if self._nodes[node_id]._idname == type_id:
+                return self._nodes[node_id]
 
     def ConnectNodes(self, src_socket, dst_socket):
         pt1 = src_socket._node._pos + src_socket._pos
