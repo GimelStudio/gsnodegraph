@@ -161,9 +161,9 @@ class NodeGraph(wx.ScrolledCanvas):
                 elif self.src_socket.direction != SOCKET_OUTPUT:
 
                     for wire in self.wires:
-                        if wire._dstsocket == self.src_socket:
-                            dst = wire._dstsocket
-                            self.src_socket = wire._srcsocket
+                        if wire.dstsocket == self.src_socket:
+                            dst = wire.dstsocket
+                            self.src_socket = wire.srcsocket
                             self.DisconnectNodes(self.src_socket, dst)
 
                     # Refresh the nodegraph
@@ -236,9 +236,9 @@ class NodeGraph(wx.ScrolledCanvas):
                         # connect the current wire.
                         else:
                             for wire in self.wires:
-                                if wire._dstsocket == dst_socket:
-                                    dst = wire._dstsocket
-                                    src = wire._srcsocket
+                                if wire.dstsocket == dst_socket:
+                                    dst = wire.dstsocket
+                                    src = wire.srcsocket
                                     self.DisconnectNodes(src, dst)
 
                             self.ConnectNodes(self.src_socket, dst_socket)
@@ -700,9 +700,9 @@ class NodeGraph(wx.ScrolledCanvas):
         # Disconnect any previous connections
         wires = output_node_socket.GetWires()
         for wire in wires:
-            if wire._dstsocket == output_node_socket:
-                dst = wire._dstsocket
-                src = wire._srcsocket
+            if wire.dstsocket == output_node_socket:
+                dst = wire.dstsocket
+                src = wire.srcsocket
                 self.DisconnectNodes(src, dst)
 
         # Connect the newly selected node to the output
@@ -752,7 +752,7 @@ class NodeGraph(wx.ScrolledCanvas):
         for wire in self.wires:
             if wire.srcsocket is src_socket and wire.dstsocket is dst_socket:
                 self.wires.remove(wire)
-                wire._dstsocket.node.EditParameter(wire._dstsocket.idname, None)
+                wire.dstsocket.node.EditParameter(wire.dstsocket.idname, None)
 
         self.SendNodeDisconnectEvent()
 

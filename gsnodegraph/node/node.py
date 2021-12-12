@@ -44,10 +44,10 @@ class NodeBase(object):
         self.sockets = []
         self.parameters = {}
 
-        self.isoutput = False
+        self.is_output = False
         self.label = ""
         self.category = "INPUT"
-        self.headercolor = wx.Colour(NODE_HEADER_CATEGORY_COLORS["INPUT"])
+        self.header_color = wx.Colour(NODE_HEADER_CATEGORY_COLORS["INPUT"])
 
         self.thumbnail = self.CreateEmptyBitmap()
         self.expandicon_bmp = ICON_IMAGE.GetBitmap()
@@ -55,7 +55,7 @@ class NodeBase(object):
 
     def _Init(self, idname) -> None:
         self.InitSockets()
-        self.InitHeaderColor()
+        self.Initheader_color()
         self.InitSize()
         self.SetIdName(idname)
 
@@ -87,8 +87,8 @@ class NodeBase(object):
     def EditParameter(self, idname, value):
         pass
 
-    def InitHeaderColor(self) -> None:
-        self.headercolor = wx.Colour(NODE_HEADER_CATEGORY_COLORS[self.GetCategory()])
+    def Initheader_color(self) -> None:
+        self.header_color = wx.Colour(NODE_HEADER_CATEGORY_COLORS[self.GetCategory()])
 
     def InitSockets(self) -> None:
         sockets = []
@@ -158,7 +158,7 @@ class NodeBase(object):
 
     def IsOutputNode(self) -> bool:
         """ Override method to set whether the node is the output or not. """
-        return self.isoutput
+        return self.is_output
 
     def GetLabel(self) -> str:
         """ Override method to set the node label. """
@@ -269,8 +269,8 @@ class NodeBase(object):
             header_color = wx.Colour(NODE_HEADER_MUTED_COLOR)
             bottom_color = wx.Colour(NODE_HEADER_MUTED_COLOR).ChangeLightness(80)
         else:
-            header_color = wx.Colour(self.headercolor).ChangeLightness(70)
-            bottom_color = wx.Colour(self.headercolor).ChangeLightness(55)
+            header_color = wx.Colour(self.header_color).ChangeLightness(70)
+            bottom_color = wx.Colour(self.header_color).ChangeLightness(55)
         dc.SetBrush(wx.Brush(header_color))
         dc.DrawRoundedRectangle(x+1, y+1, w-2, 24, 3)
 
