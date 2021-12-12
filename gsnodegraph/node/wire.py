@@ -22,93 +22,32 @@ from ..constants import WIRE_NORMAL_COLOR, WIRE_ACTIVE_COLOR
 class NodeWire(object):
     """ Wire for showing a connection between two nodes. """
     def __init__(self, parent, pnt1, pnt2, srcsocket, dstsocket, direction, curvature):
-        self._parent = parent
-        self._pnt1 = pnt1
-        self._pnt2 = pnt2
-        self._srcsocket = srcsocket
-        self._dstsocket = dstsocket
-        self._curvature = curvature
-        self._direction = direction
+        self.parent = parent
+        self.pnt1 = pnt1
+        self.pnt2 = pnt2
+        self.srcsocket = srcsocket
+        self.dstsocket = dstsocket
+        self.curvature = curvature
+        self.direction = direction
 
-        self._srcnode = None
-        self._dstnode = None
-        self._active = False
+        self.srcnode = None
+        self.dstnode = None
+        self.active = False
 
-    @property
-    def parent(self):
-        return self._parent
-
-    @parent.setter
-    def parent(self, parent):
-        self._parent = parent
-
-    @property
-    def pnt1(self):
-        return self._pnt1
-
-    @pnt1.setter
-    def pnt1(self, pnt1):
-        self._pnt1 = pnt1
-
-    @property
-    def pnt2(self):
-        return self._pnt2
-
-    @pnt2.setter
-    def pnt2(self, pnt2):
-        self._pnt2 = pnt2
-
-    @property
-    def srcsocket(self):
-        return self._srcsocket
-
-    @srcsocket.setter
-    def srcsocket(self, srcsocket):
-        self._srcsocket = srcsocket
-
-    @property
-    def dstsocket(self):
-        return self._dstsocket
-
-    @dstsocket.setter
-    def dstsocket(self, dstsocket):
-        self._dstsocket = dstsocket
-
-    @property
-    def active(self):
-        return self._active
-
-    @active.setter
-    def active(self, active):
-        self._active = active
-
-    @property
-    def curvature(self):
-        return self._curvature
-
-    @curvature.setter
-    def curvature(self, curvature):
-        self._curvature = curvature
-
-    @property
-    def direction(self):
-        return self._direction
-
-    @direction.setter
-    def direction(self, direction):
-        self._direction = direction
-
-    def SetCurvature(self, curvature):
+    def SetCurvature(self, curvature) -> None:
+        """ Set the curvature of the wire. """
         self.curvature = curvature
 
-    def GetRect(self):
+    def GetRect(self) -> wx.Rect:
+        """ Get the bounding box rect of the wire. """
         min_x = min(self.pnt1[0], self.pnt2[0])
         min_y = min(self.pnt1[1], self.pnt2[1])
         size = self.pnt2 - self.pnt1
         rect = wx.Rect(min_x - 10, min_y, abs(size[0]) + 20, abs(size[1]))
         return rect.Inflate(2, 2)
 
-    def Draw(self, dc):
+    def Draw(self, dc) -> None:
+        """ Draw the node wire. """
         # Direction of wire
         sign = 1
         if self.direction == 0:
@@ -116,6 +55,13 @@ class NodeWire(object):
 
         # Curvature of the wire
         curvature = int(self.curvature * 2)
+
+        # Wire color
+        if self.active is True:
+            color = WIRE_ACTIVE_COLOR
+        else:
+            color = WIRE_NORMAL_COLOR
+        dc.SetPen(wx.Pen(wx.Colour(color), 3))
 
         # If the wire has curvature, use a spline
         if self.curvature > 0:
@@ -125,18 +71,8 @@ class NodeWire(object):
             pnts.append(self.pnt2 - wx.Point(curvature * sign, 0))
             pnts.append(self.pnt2)
 
-            if self.active is True:
-                color = WIRE_ACTIVE_COLOR
-            else:
-                color = WIRE_NORMAL_COLOR
-            dc.SetPen(wx.Pen(wx.Colour(color), 3))
             dc.DrawSpline(pnts)
 
         else:
             # Otherwise, use a line
-            if self.active is True:
-                color = WIRE_ACTIVE_COLOR
-            else:
-                color = WIRE_NORMAL_COLOR
-            dc.SetPen(wx.Pen(wx.Colour(color), 3))
             dc.DrawLine(self.pnt1[0], self.pnt1[1], self.pnt2[0], self.pnt2[1])

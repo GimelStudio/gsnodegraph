@@ -67,10 +67,10 @@ class OutputNode(NodeBase):
     def __init__(self, nodegraph, _id):
         NodeBase.__init__(self, nodegraph, _id)
 
-        self._label = "Output"
-        self._isoutput = True
-        self._category = "OUTPUT"
-        self._parameters = {
+        self.label = "Output"
+        self.isoutput = True
+        self.category = "OUTPUT"
+        self.parameters = {
             "image_socketid": ImageParam("image_socketid", "Image")
         }
 
@@ -80,9 +80,9 @@ class ImageNode(NodeBase):
     def __init__(self, nodegraph, _id):
         NodeBase.__init__(self, nodegraph, _id)
 
-        self._label = "Image"
-        self._category = "INPUT"
-        self._parameters = {}
+        self.label = "Image"
+        self.category = "INPUT"
+        self.parameters = {}
 
 
 class MixNode(NodeBase):
@@ -90,9 +90,9 @@ class MixNode(NodeBase):
     def __init__(self, nodegraph, _id):
         NodeBase.__init__(self, nodegraph, _id)
 
-        self._label = "Mix"
-        self._category = "BLEND"
-        self._parameters = {
+        self.label = "Mix"
+        self.category = "BLEND"
+        self.parameters = {
             "image1_socketid": ImageParam("image1_socketid", "Overlay"),
             "image2_socketid": ImageParam("image2_socketid", "Image")
         }
@@ -104,9 +104,9 @@ class BlurNode(NodeBase):
     def __init__(self, nodegraph, _id):
         NodeBase.__init__(self, nodegraph, _id)
 
-        self._label = "Blur"
-        self._category = "FILTER"
-        self._parameters = {
+        self.label = "Blur"
+        self.category = "FILTER"
+        self.parameters = {
             "image1_socketid": ImageParam("image1_socketid", "Image"),
             "int_socketid": IntegerParam("int_socketid", "Integer")
         }
@@ -117,9 +117,9 @@ class BlendNode(NodeBase):
     def __init__(self, nodegraph, _id):
         NodeBase.__init__(self, nodegraph, _id)
 
-        self._label = "Blend"
-        self._category = "BLEND"
-        self._parameters = {
+        self.label = "Blend"
+        self.category = "BLEND"
+        self.parameters = {
             "alphamask_socketid": ImageParam("alphamask_socketid", "Alpha"),
             "image1_socketid": ImageParam("image1_socketid", "Image"),
             "image2_socketid": ImageParam("image2_socketid", "Image")
@@ -131,8 +131,8 @@ class ValueNode(NodeBase):
     def __init__(self, nodegraph, _id):
         NodeBase.__init__(self, nodegraph, _id)
 
-        self._label = "Value"
-        self._category = "INPUT"
+        self.label = "Value"
+        self.category = "INPUT"
 
     def NodeOutputDatatype(self):
         return "VALUE"

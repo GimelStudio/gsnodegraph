@@ -25,96 +25,44 @@ class NodeSocket(object):
     """ Node socket showing the datatypes and flow of the node relative to
     the graph. Wires are dropped into the socket to connect nodes. """
     def __init__(self, label, idname, datatype, node, direction):
-        self._label = label
-        self._idname = idname
-        self._node = node
-        self._pos = wx.Point(0, 0)
-        self._color = wx.Colour("#fff")
-        self._direction = direction
-        self._datatype = datatype
-        self._wires = []
+        self.label = label
+        self.idname = idname
+        self.node = node
+        self.direction = direction
+        self.datatype = datatype
 
-        self._InitSocket()
+        self.wires = []
+        self.pos = wx.Point(0, 0)
+        self.color = wx.Colour("#fff")
+        self.tdc = wx.WindowDC(wx.GetApp().GetTopWindow())
 
-    def _InitSocket(self) -> None:
-        """ Routine methods for initilizing the socket. """
         self.SetColorByDataType(self.datatype)
-        self.SetTopLevelDC()
-
-    @property
-    def label(self):
-        return self._label
-
-    @label.setter
-    def label(self, label):
-        self._label = label
-
-    @property
-    def node(self):
-        return self._node
-
-    @node.setter
-    def node(self, node):
-        self._node = node
-
-    @property
-    def pos(self):
-        return self._pos
-
-    @pos.setter
-    def pos(self, pos):
-        self._pos = pos
-
-    @property
-    def color(self):
-        return self._color
-
-    @color.setter
-    def color(self, color):
-        self._color = color
-
-    @property
-    def direction(self):
-        return self._direction
-
-    @direction.setter
-    def direction(self, direction):
-        self._direction = direction
-
-    @property
-    def datatype(self):
-        return self._datatype
-
-    @datatype.setter
-    def datatype(self, datatype):
-        self._datatype = datatype
 
     def GetWires(self) -> list:
-        return self._wires
+        """ Get the wires for this socket. """
+        return self.wires
 
     def CurrentSocketPos(self) -> wx.Point:
         """ Return the current coords of the node socket. """
         return self.pos + self.node.pos
 
     def SetColorByDataType(self, datatype) -> None:
-        """ Set the color based on the datatype. """
-        self.color = wx.Colour(SOCKET_DATATYPE_COLORS[datatype])
-
-    def SetTopLevelDC(self) -> None:
-        self.tdc = wx.WindowDC(wx.GetApp().GetTopWindow())
+        """ Set the socket base color based on the datatype. """
+        self.color = wx.Colour(SOCKET_DATATYPE_COLORS[datatype])        
 
     def HitTest(self, pos) -> bool:
         """ Returns True if the node socket was hit. """
         pnt = pos - self.pos
         distance = math.sqrt(math.pow(pnt.x, 2) + math.pow(pnt.y, 2))
 
-        # socket hit radius
+        # Socket hit radius
         if math.fabs(distance) < SOCKET_HIT_RADIUS:
             return True
 
     def Draw(self, dc) -> None:
         """ Draw the node socket. """
         pos = self.CurrentSocketPos()
+        w, h = self.tdc.GetTextExtent(self.label)
 
         # Set the socket color
         dc.SetPen(wx.Pen(wx.Colour(SOCKET_BORDER_COLOR), 1))
@@ -122,8 +70,6 @@ class NodeSocket(object):
 
         # Draw the socket
         dc.DrawCircle(pos.x, pos.y, SOCKET_RADIUS)
-
-        w, h = self.tdc.GetTextExtent(self.label)
 
         # Socket label margin
         if self.direction == SOCKET_INPUT:
