@@ -124,7 +124,7 @@ class NodeBase(object):
                 socket_type = SOCKET_OUTPUT  # Socket type OUT
 
             # We keep track of where the last socket is placed
-            self.lastsocketpos = 60 + 12 * i
+            self.lastsocket_pos = 60 + 12 * i
 
             # Create the node sockets
             socket = NodeSocket(label=p[0], idname=p[1], datatype=p[2],
@@ -138,17 +138,17 @@ class NodeBase(object):
         # Calculate the normal size of the node to fit
         # the amount of sockets the node has. The expanded size
         # is calculated to be the normal size plus the image thumbnail size.
-        calc_height = self.lastsocketpos + self.thumbnail.Height + NODE_THUMB_PADDING * 2
-        self.expandedsize = wx.Size(NODE_DEFAULT_WIDTH, calc_height)
+        calc_height = self.lastsocket_pos + self.thumbnail.Height + NODE_THUMB_PADDING * 2
+        self.expanded_size = wx.Size(NODE_DEFAULT_WIDTH, calc_height)
 
-        self.normalsize = wx.Size(NODE_DEFAULT_WIDTH,
-                                   self.lastsocketpos+(NODE_Y_PADDING*2))
+        self.normal_size = wx.Size(NODE_DEFAULT_WIDTH,
+                                   self.lastsocket_pos+(NODE_Y_PADDING*2))
 
         # Set the initial node size
         if self.IsExpanded():
-            self.SetSize(self.expandedsize)
+            self.SetSize(self.expanded_size)
         else:
-            self.SetSize(self.normalsize)
+            self.SetSize(self.normal_size)
 
     def HasThumbnail(self) -> bool:
         if self.NodeOutputDatatype() == "RGBAIMAGE":
@@ -207,7 +207,7 @@ class NodeBase(object):
     def SetMuted(self, muted=True) -> None:
         self.muted = muted
         self.SetExpanded(False)
-        self.SetSize(self.normalsize)
+        self.SetSize(self.normal_size)
 
     def IsExpanded(self) -> bool:
         return self.expanded
@@ -219,23 +219,23 @@ class NodeBase(object):
         if self.HasThumbnail():
             if self.IsExpanded() is True:
                 self.SetExpanded(False)
-                self.SetSize(self.normalsize)
+                self.SetSize(self.normal_size)
             elif self.IsExpanded() is False:
                 self.SetExpanded(True)
-                self.SetSize(self.expandedsize)
+                self.SetSize(self.expanded_size)
 
     def GetSockets(self) -> list:
         return self.sockets
 
     def SetThumbnail(self, thumb) -> None:
         if self.HasThumbnail():
-            self._thumbnail = thumb
+            self.thumbnail = thumb
             self.UpdateExpandSize()
 
     def UpdateExpandSize(self) -> None:
-        calc_height = self.lastsocketpos + self.thumbnail.Height + NODE_THUMB_PADDING * 2
-        self.expandedsize = wx.Size(NODE_DEFAULT_WIDTH, calc_height)
-        self.SetSize(self.expandedsize)
+        calc_height = self.lastsocket_pos + self.thumbnail.Height + NODE_THUMB_PADDING * 2
+        self.expanded_size = wx.Size(NODE_DEFAULT_WIDTH, calc_height)
+        self.SetSize(self.expanded_size)
 
     def FindSocket(self, idname):
         """ Return the node socket with the given name.
@@ -299,7 +299,7 @@ class NodeBase(object):
         if self.IsExpanded() and self.HasThumbnail():
             # Calculate the coords for the placement of the thumbnail
             thumb_rect = wx.Rect((x+NODE_THUMB_PADDING/2),
-                                  y+self.lastsocketpos+(NODE_Y_PADDING*2),
+                                  y+self.lastsocket_pos+(NODE_Y_PADDING*2),
                                   NODE_DEFAULT_WIDTH-NODE_THUMB_PADDING,
                                   self.thumbnail.Height)
 

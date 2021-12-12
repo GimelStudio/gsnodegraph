@@ -61,6 +61,7 @@ class NodeGraph(wx.ScrolledCanvas):
 
         self.sel_nodes = []
         self.active_node = None
+        self.last_active_node = None
 
         self.middle_pnt = None
         self.last_pnt = None
@@ -216,6 +217,7 @@ class NodeGraph(wx.ScrolledCanvas):
         # Attempt to make a connection
         if self.src_node != None:
             dst_node = self.HitTest(winpnt)
+            self.last_active_node = dst_node
             if dst_node is not None:
                 dst_socket = dst_node.HitTest(winpnt)
 
@@ -243,7 +245,9 @@ class NodeGraph(wx.ScrolledCanvas):
 
                             self.ConnectNodes(self.src_socket, dst_socket)
 
-            # Update the properties panel
+            # Send event to update the properties panel
+            # if (self.last_active_node is not None and 
+            #     self.last_active_node != self.src_node):
             self.SendNodeSelectEvent()
 
         # Reset all values
