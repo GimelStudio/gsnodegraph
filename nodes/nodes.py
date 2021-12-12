@@ -68,7 +68,7 @@ class OutputNode(NodeBase):
         NodeBase.__init__(self, nodegraph, _id)
 
         self.label = "Output"
-        self.isoutput = True
+        self.is_output = True
         self.category = "OUTPUT"
         self.parameters = {
             "image_socketid": ImageParam("image_socketid", "Image")
