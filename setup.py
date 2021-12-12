@@ -8,7 +8,7 @@ setup(
               'gsnodegraph.graph.utils',
               'gsnodegraph.node',
               'gsnodegraph.assets'],
-  version = '0.4.0',
+  version = '0.4.1',
   license = 'Apache 2.0',
   description = 'Powerful node graph widget for wxPython GUIs',
   long_description_content_type="text/markdown",
