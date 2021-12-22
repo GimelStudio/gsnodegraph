@@ -678,10 +678,15 @@ class NodeGraph(wx.ScrolledCanvas):
             self.UpdateNodeGraph()
             return duplicate_node
 
-    def AddNode(self, idname, pos=(0, 0), location="POSITION"):
-        node = self.node_registry[idname](self, uuid.uuid4())
-        node._Init(idname)
+    def AddNode(self, idname, nodeid=None, pos=(0, 0), location="POSITION"):
+        if nodeid is None:
+            node_id = uuid.uuid4().hex
+        else:
+            node_id = nodeid
+        node = self.node_registry[idname](self, node_id)
+        node.Init(idname)
         self.nodes[node.id] = node
+
         if location == "CURSOR":
             node.pos = self.CalcMouseCoords(self.ScreenToClient(wx.GetMousePosition()))
         else:

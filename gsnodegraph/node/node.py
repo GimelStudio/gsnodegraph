@@ -15,7 +15,6 @@
 # ----------------------------------------------------------------------------
 
 import wx
-import uuid
 
 from gsnodegraph.assets.bitmaps import ICON_IMAGE
 
@@ -53,7 +52,7 @@ class NodeBase(object):
         self.expandicon_bmp = ICON_IMAGE.GetBitmap()
         self.checkerboard_bmp = ICON_BRUSH_CHECKERBOARD.GetBitmap()
 
-    def _Init(self, idname) -> None:
+    def Init(self, idname) -> None:
         self.InitSockets()
         self.Initheader_color()
         self.InitSize()
