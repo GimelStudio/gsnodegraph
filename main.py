@@ -72,13 +72,13 @@ class MyFrame(wx.Frame):
         ng = NodeGraph(self, registry)
 
         # Add nodes to the node graph
-        node1 = ng.AddNode('image_nodeid', wx.Point(100, 10))
-        node2 = ng.AddNode('image_nodeid', wx.Point(450, 400))
-        node3 = ng.AddNode('mix_nodeid', wx.Point(400, 100))
-        node4 = ng.AddNode('blur_nodeid', wx.Point(700, 100))
-        node5 = ng.AddNode('blend_nodeid', wx.Point(720, 300))
-        node6 = ng.AddNode('value_nodeid', wx.Point(620, 430))
-        node7 = ng.AddNode('output_nodeid', wx.Point(1000, 290))
+        node1 = ng.AddNode('image_nodeid', pos=wx.Point(100, 10))
+        node2 = ng.AddNode('image_nodeid', pos=wx.Point(450, 400))
+        node3 = ng.AddNode('mix_nodeid', pos=wx.Point(400, 100))
+        node4 = ng.AddNode('blur_nodeid', pos=wx.Point(700, 100))
+        node5 = ng.AddNode('blend_nodeid', pos=wx.Point(720, 300))
+        node6 = ng.AddNode('value_nodeid', pos=wx.Point(620, 430))
+        node7 = ng.AddNode('output_nodeid', pos=wx.Point(1000, 290))
 
         # Maximize the window
         self.Maximize(True)
