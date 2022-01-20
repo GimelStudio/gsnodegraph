@@ -42,10 +42,12 @@ ID_CONTEXTMENU_DESELECTALLNODES = wx.NewIdRef()
 ID_CONTEXTMENU_SELECTALLNODES = wx.NewIdRef()
 
 
-class NodeGraph(wx.ScrolledCanvas):
-    def __init__(self, parent, registry, *args, **kwds):
+class NodeGraphBase(wx.ScrolledCanvas):
+    def __init__(self, parent, registry, config, *args, **kwds):
         self.parent = parent
         self.node_registry = registry
+        self.node_datatypes = config["node_datatypes"]
+        self.node_categories = config["node_categories"]
 
         self.matrix = ZMatrix()
         self.identity = ZMatrix()

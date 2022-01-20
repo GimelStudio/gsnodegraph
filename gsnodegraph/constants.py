@@ -15,11 +15,6 @@
 # ----------------------------------------------------------------------------
 
 
-SOCKET_DATATYPE_COLORS = {
-    "RGBAIMAGE": "#C6C62D",  # Yellow
-    "VALUE": "#A0A0A0",  # Grey
-}
-
 SOCKET_INPUT = 0
 SOCKET_OUTPUT = 1
 
@@ -33,17 +28,6 @@ WIRE_ACTIVE_COLOR = (210, 210, 210, 255)
 
 DEFAULT_WIRE_CURVATURE = 8
 
-NODE_HEADER_CATEGORY_COLORS = {
-    "INPUT": "#E64555",  # Burgendy
-    "DRAW": "#AF4467",  # Pink
-    "MASK": "#084D4D",  # Blue-green
-    "CONVERT": "#564B7C",  # Purple
-    "FILTER": "#558333",  # Green
-    "BLEND": "#498DB8",  # Light blue
-    "COLOR": "#C2AF3A",  # Yellow
-    "TRANSFORM": "#6B8B8B", # Blue-grey
-    "OUTPUT": "#B33641"  # Red
-}
 NODE_HEADER_MUTED_COLOR = (70, 70, 70, 255)
 
 NODE_NORMAL_COLOR = (54, 56, 60, 255)
@@ -55,10 +39,10 @@ NODE_BORDER_SELECTED_COLOR = (255, 255, 255, 255)
 
 NODE_THUMB_BORDER_COLOR = (27, 28, 30, 255)
 
-NODE_DEFAULT_WIDTH = 150
-NODE_DEFAULT_HEIGHT = 150
+NODE_DEFAULT_WIDTH = 154
+NODE_DEFAULT_HEIGHT = 154
 NODE_THUMB_PADDING = 16
-NODE_Y_PADDING = 10
+NODE_Y_PADDING = 12
 
 SELECTION_BOX_BORDER_COLOR = (194, 194, 194, 255)
 SELECTION_BOX_COLOR = (100, 100, 100, 56)

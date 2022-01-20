@@ -38,7 +38,7 @@ class ImageParam(Parameter):
     def __init__(self, idname, label, default=Image()):
         Parameter.__init__(self, idname, label, default)
         self.value = default
-        self.datatype = "RGBAIMAGE"
+        self.datatype = "IMAGE"
 
     def GetValue(self):
         return self.value
@@ -117,7 +117,7 @@ class BlendNode(NodeBase):
     def __init__(self, nodegraph, _id):
         NodeBase.__init__(self, nodegraph, _id)
 
-        self.label = "Blend"
+        self.label = "Brightness/Contrast"
         self.category = "BLEND"
         self.parameters = {
             "alphamask_socketid": ImageParam("alphamask_socketid", "Alpha"),
@@ -131,7 +131,7 @@ class ValueNode(NodeBase):
     def __init__(self, nodegraph, _id):
         NodeBase.__init__(self, nodegraph, _id)
 
-        self.label = "Value"
+        self.label = "Perspective Transform"
         self.category = "INPUT"
 
     def NodeOutputDatatype(self):

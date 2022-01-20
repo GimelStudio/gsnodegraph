@@ -20,7 +20,7 @@ from gsnodegraph.assets.bitmaps import ICON_IMAGE
 
 from .socket import NodeSocket
 from ..constants import (NODE_DEFAULT_WIDTH, NODE_DEFAULT_HEIGHT,
-                         NODE_HEADER_MUTED_COLOR, NODE_HEADER_CATEGORY_COLORS,
+                         NODE_HEADER_MUTED_COLOR,
                          SOCKET_INPUT, SOCKET_OUTPUT, NODE_THUMB_PADDING, NODE_Y_PADDING,
                          NODE_NORMAL_COLOR, NODE_MUTED_COLOR, NODE_THUMB_BORDER_COLOR,
                          NODE_BORDER_NORMAL_COLOR, NODE_BORDER_SELECTED_COLOR)
@@ -28,9 +28,9 @@ from ..assets import (ICON_BRUSH_CHECKERBOARD, ICON_IMAGE)
 
 
 class NodeBase(object):
-    def __init__(self, nodegraph, _id):
+    def __init__(self, nodegraph, id):
         self.nodegraph = nodegraph
-        self.id = _id
+        self.id = id
         self.idname = None
         self.pos = wx.Point(0, 0)
         self.size = wx.Size(NODE_DEFAULT_WIDTH, NODE_DEFAULT_HEIGHT)
@@ -46,15 +46,27 @@ class NodeBase(object):
         self.is_output = False
         self.label = ""
         self.category = "INPUT"
-        self.header_color = wx.Colour(NODE_HEADER_CATEGORY_COLORS["INPUT"])
+        self.header_color = wx.Colour("#242424")
 
         self.thumbnail = self.CreateEmptyBitmap()
         self.expandicon_bmp = ICON_IMAGE.GetBitmap()
         self.checkerboard_bmp = ICON_BRUSH_CHECKERBOARD.GetBitmap()
 
+    @property
+    def NodeGraph(self):
+        return self.nodegraph
+
+    @property
+    def NodeDatatypes(self):
+        return self.nodegraph.node_datatypes
+
+    @property
+    def NodeCategories(self):
+        return self.nodegraph.node_categories
+
     def Init(self, idname) -> None:
         self.InitSockets()
-        self.Initheader_color()
+        self.InitHeaderColor()
         self.InitSize()
         self.SetIdName(idname)
 
@@ -65,7 +77,7 @@ class NodeBase(object):
         return img.ConvertToBitmap()
 
     def NodeOutputDatatype(self) -> str:
-        return "RGBAIMAGE"
+        return "IMAGE"
 
     def AddSocket(self, label, color, direction) -> None:
         self.ArrangeSockets()
@@ -86,8 +98,8 @@ class NodeBase(object):
     def EditParameter(self, idname, value):
         pass
 
-    def Initheader_color(self) -> None:
-        self.header_color = wx.Colour(NODE_HEADER_CATEGORY_COLORS[self.GetCategory()])
+    def InitHeaderColor(self) -> None:
+        self.header_color = wx.Colour(self.NodeCategories[self.GetCategory()])
 
     def InitSockets(self) -> None:
         sockets = []
@@ -103,7 +115,7 @@ class NodeBase(object):
         if self.IsOutputNode() is not True:
             # TODO: eventually, we want to have the ability to edit the label
             data_type = self.NodeOutputDatatype()
-            if data_type == "RGBAIMAGE":
+            if data_type == "IMAGE":
                 idname = "output_image"
                 label = "Image"
             else:
@@ -123,12 +135,13 @@ class NodeBase(object):
                 socket_type = SOCKET_OUTPUT  # Socket type OUT
 
             # We keep track of where the last socket is placed
-            self.lastsocket_pos = 60 + 12 * i
+            self.lastsocket_pos = 60 + 14 * i
 
             # Create the node sockets
             socket = NodeSocket(label=p[0], idname=p[1], datatype=p[2],
                                 node=self, direction=socket_type)
-            socket.pos = wx.Point(x, 40 + (19 * i))
+            socket.pos = wx.Point(x, 45 + (19 * i))
+            socket.SetColor(self.NodeDatatypes[socket.datatype])
             sockets.append(socket)
 
         self.sockets = sockets
@@ -150,7 +163,7 @@ class NodeBase(object):
             self.SetSize(self.normal_size)
 
     def HasThumbnail(self) -> bool:
-        if self.NodeOutputDatatype() == "RGBAIMAGE":
+        if self.NodeOutputDatatype() == "IMAGE":
             return True
         else:
             return False
@@ -271,11 +284,11 @@ class NodeBase(object):
             header_color = wx.Colour(self.header_color).ChangeLightness(70)
             bottom_color = wx.Colour(self.header_color).ChangeLightness(55)
         dc.SetBrush(wx.Brush(header_color))
-        dc.DrawRoundedRectangle(x+1, y+1, w-2, 24, 3)
+        dc.DrawRoundedRectangle(x+1, y+1, w-2, 25, 3)
 
         # Bottom border of the node header (to cover up the rounded bottom)
         dc.SetBrush(wx.Brush(bottom_color))
-        dc.DrawRectangle(x+1, y+23, w-2, 2)
+        dc.DrawRectangle(x+1, y+24, w-2, 2)
 
         # Node name label
         if self.IsMuted():
@@ -290,7 +303,7 @@ class NodeBase(object):
 
         # Expand node thumbnail icon
         if self.HasThumbnail() == True and self.IsMuted() != True:
-            self.expandicon_rect = wx.Rect(x+NODE_DEFAULT_WIDTH-28, y+4, 16, 16)
+            self.expandicon_rect = wx.Rect(x+NODE_DEFAULT_WIDTH-28, y+5, 16, 16)
             dc.DrawBitmap(self.expandicon_bmp, self.expandicon_rect[0],
                         self.expandicon_rect[1], True)
 

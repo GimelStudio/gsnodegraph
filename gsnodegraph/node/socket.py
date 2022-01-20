@@ -17,13 +17,15 @@
 import math
 import wx
 
-from ..constants import (SOCKET_BORDER_COLOR, SOCKET_INPUT, SOCKET_DATATYPE_COLORS,
-                         SOCKET_HIT_RADIUS, SOCKET_RADIUS, SOCKET_BORDER_COLOR)
+from ..constants import (SOCKET_BORDER_COLOR, SOCKET_INPUT, SOCKET_HIT_RADIUS, 
+                         SOCKET_RADIUS, SOCKET_BORDER_COLOR)
 
 
 class NodeSocket(object):
-    """ Node socket showing the datatypes and flow of the node relative to
-    the graph. Wires are dropped into the socket to connect nodes. """
+    """ 
+    Node socket showing the datatypes and flow of the node relative to
+    the graph. Wires are dropped into the socket to connect nodes. 
+    """
     def __init__(self, label, idname, datatype, node, direction):
         self.label = label
         self.idname = idname
@@ -36,20 +38,20 @@ class NodeSocket(object):
         self.color = wx.Colour("#fff")
         self.tdc = wx.WindowDC(wx.GetApp().GetTopWindow())
 
-        self.SetColorByDataType(self.datatype)
+        #self.SetColorByDataType(self.datatype)
 
     def GetWires(self) -> list:
         """ Get the wires for this socket. """
         return self.wires
 
+    def SetColor(self, color) -> None:
+        """ Set the socket base color based on the datatype. """
+        self.color = wx.Colour(color)  
+
     def CurrentSocketPos(self) -> wx.Point:
         """ Return the current coords of the node socket. """
         return self.pos + self.node.pos
-
-    def SetColorByDataType(self, datatype) -> None:
-        """ Set the socket base color based on the datatype. """
-        self.color = wx.Colour(SOCKET_DATATYPE_COLORS[datatype])        
-
+      
     def HitTest(self, pos) -> bool:
         """ Returns True if the node socket was hit. """
         pnt = pos - self.pos

@@ -16,12 +16,12 @@
 
 import wx
 
-from gsnodegraph import NodeGraph as NodeGraphBase
+from gsnodegraph import NodeGraphBase
 from gsnodegraph.constants import *
 
 
 class NodeGraph(NodeGraphBase):
-    def __init__(self, parent, registry, *args, **kwds):
-        NodeGraphBase.__init__(self, parent, registry, *args, **kwds)
+    def __init__(self, parent, registry, config, *args, **kwds):
+        NodeGraphBase.__init__(self, parent, registry, config, *args, **kwds)
 
         # Do your custom stuff and overrides here

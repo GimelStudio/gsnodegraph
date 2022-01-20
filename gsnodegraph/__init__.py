@@ -1,4 +1,4 @@
-from .graph import (NodeGraph,
+from .graph import (NodeGraphBase,
                     ID_CONTEXTMENU_DUPLICATENODE,
                     ID_CONTEXTMENU_DELETENODES,
                     EVT_GSNODEGRAPH_NODESELECT, 
