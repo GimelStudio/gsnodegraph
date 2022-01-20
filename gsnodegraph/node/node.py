@@ -34,19 +34,20 @@ class NodeBase(object):
         self.idname = None
         self.pos = wx.Point(0, 0)
         self.size = wx.Size(NODE_DEFAULT_WIDTH, NODE_DEFAULT_HEIGHT)
+        self.header_color = wx.Colour("#242424")
 
         self.expanded = False
         self.selected = False
         self.active = False
         self.muted = False
+        self.is_output = False
 
         self.sockets = []
-        self.parameters = {}
+        self.properties = {}
+        self.outputs = {}
 
-        self.is_output = False
         self.label = ""
-        self.category = "INPUT"
-        self.header_color = wx.Colour("#242424")
+        self.category = None
 
         self.thumbnail = self.CreateEmptyBitmap()
         self.expandicon_bmp = ICON_IMAGE.GetBitmap()
@@ -106,22 +107,16 @@ class NodeBase(object):
         ins = []
         outs = []
 
-        # Create a list of input sockets with the format:
+        # Create a list of input and output sockets with the format:
         # [(label, idname, datatype), ...]
-        for param_id in self.parameters:
-            param = self.parameters[param_id]
-            ins.append((param.label, param.idname, param.datatype))
+        for prop_id in self.properties:
+            prop = self.properties[prop_id]
+            ins.append((prop.label, prop.idname, prop.datatype))
 
         if self.IsOutputNode() is not True:
-            # TODO: eventually, we want to have the ability to edit the label
-            data_type = self.NodeOutputDatatype()
-            if data_type == "IMAGE":
-                idname = "output_image"
-                label = "Image"
-            else:
-                idname = "output_value"
-                label = "Value"
-            outs = [(label, idname, data_type)]
+            for output_id in self.outputs:
+                output = self.outputs[output_id]
+                outs.append((output.label, output.idname, output.datatype))
 
         x, y, w, h = self.GetRect()
         x, y = self.pos

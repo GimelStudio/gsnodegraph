@@ -44,6 +44,9 @@ ID_CONTEXTMENU_SELECTALLNODES = wx.NewIdRef()
 
 class NodeGraphBase(wx.ScrolledCanvas):
     def __init__(self, parent, registry, config, *args, **kwds):
+        kwds["style"] = kwds.get("style", 0) | wx.DEFAULT_FRAME_STYLE
+        wx.ScrolledCanvas.__init__(self, parent, *args, **kwds)
+        
         self.parent = parent
         self.node_registry = registry
         self.node_datatypes = config["node_datatypes"]
@@ -79,9 +82,6 @@ class NodeGraphBase(wx.ScrolledCanvas):
 
         # Init the add node button
         self.addnode_btn = AddNodeBtn(self)
-
-        kwds["style"] = kwds.get("style", 0) | wx.DEFAULT_FRAME_STYLE
-        wx.ScrolledCanvas.__init__(self, parent, *args, **kwds)
 
         # Event bindings
         self.Bind(wx.EVT_PAINT, self.OnPaint)

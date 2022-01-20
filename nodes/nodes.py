@@ -23,8 +23,8 @@ class Image(object):
     pass
 
 
-class Parameter(object):
-    """ Example parameter base class. """
+class Property(object):
+    """ Example property base class. """
     def __init__(self, idname, label, default):
         self.idname = idname
         self.label = label
@@ -33,10 +33,10 @@ class Parameter(object):
         self.datatype = None
 
 
-class ImageParam(Parameter):
-    """ Example parameter. """
+class ImageProp(Property):
+    """ Example property. """
     def __init__(self, idname, label, default=Image()):
-        Parameter.__init__(self, idname, label, default)
+        Property.__init__(self, idname, label, default)
         self.value = default
         self.datatype = "IMAGE"
 
@@ -47,18 +47,28 @@ class ImageParam(Parameter):
         self.value = value
 
 
-class IntegerParam(Parameter):
-    """ Example parameter. """
+class IntegerProp(Property):
+    """ Example property. """
     def __init__(self, idname, label, default=1):
-        Parameter.__init__(self, idname, label, default)
+        Property.__init__(self, idname, label, default)
         self.value = default
-        self.datatype = "VALUE"
+        self.datatype = "INTEGER"
 
     def GetValue(self):
         return self.value
 
     def SetValue(self, value):
         self.value = value
+
+
+
+class Output(object):
+    def __init__(self, idname, datatype, label, visible=True):
+        self.idname = idname
+        self.datatype = datatype
+        self.label = label 
+        self.visible = visible
+
 
 
 class OutputNode(NodeBase):
@@ -70,8 +80,8 @@ class OutputNode(NodeBase):
         self.label = "Output"
         self.is_output = True
         self.category = "OUTPUT"
-        self.parameters = {
-            "image_socketid": ImageParam("image_socketid", "Image")
+        self.properties = {
+            "image_socketid": ImageProp("image_socketid", "Image")
         }
 
 
@@ -82,7 +92,10 @@ class ImageNode(NodeBase):
 
         self.label = "Image"
         self.category = "INPUT"
-        self.parameters = {}
+        self.outputs = {
+            "image": Output(idname="image", datatype="IMAGE", label="Image")
+        }
+        self.properties = {}
 
 
 class MixNode(NodeBase):
@@ -92,9 +105,13 @@ class MixNode(NodeBase):
 
         self.label = "Mix"
         self.category = "BLEND"
-        self.parameters = {
-            "image1_socketid": ImageParam("image1_socketid", "Overlay"),
-            "image2_socketid": ImageParam("image2_socketid", "Image")
+        self.outputs = {
+            "image": Output(idname="image", datatype="IMAGE", label="Image"),
+            "alpha": Output(idname="alpha", datatype="INTEGER", label="Alpha")
+        }
+        self.properties = {
+            "image1_socketid": ImageProp("image1_socketid", "Overlay"),
+            "image2_socketid": ImageProp("image2_socketid", "Image")
         }
 
 
@@ -106,9 +123,12 @@ class BlurNode(NodeBase):
 
         self.label = "Blur"
         self.category = "FILTER"
-        self.parameters = {
-            "image1_socketid": ImageParam("image1_socketid", "Image"),
-            "int_socketid": IntegerParam("int_socketid", "Integer")
+        self.outputs = {
+            "image": Output(idname="image", datatype="IMAGE", label="Image")
+        }
+        self.properties = {
+            "image1_socketid": ImageProp("image1_socketid", "Image"),
+            "int_socketid": IntegerProp("int_socketid", "Integer")
         }
 
 
@@ -119,10 +139,14 @@ class BlendNode(NodeBase):
 
         self.label = "Brightness/Contrast"
         self.category = "BLEND"
-        self.parameters = {
-            "alphamask_socketid": ImageParam("alphamask_socketid", "Alpha"),
-            "image1_socketid": ImageParam("image1_socketid", "Image"),
-            "image2_socketid": ImageParam("image2_socketid", "Image")
+
+        self.outputs = {
+            "image": Output(idname="image", datatype="IMAGE", label="Image")
+        }
+        self.properties = {
+            "alphamask_socketid": ImageProp("alphamask_socketid", "Alpha"),
+            "image1_socketid": ImageProp("image1_socketid", "Image"),
+            "image2_socketid": ImageProp("image2_socketid", "Image")
         }
 
 
@@ -131,8 +155,9 @@ class ValueNode(NodeBase):
     def __init__(self, nodegraph, _id):
         NodeBase.__init__(self, nodegraph, _id)
 
-        self.label = "Perspective Transform"
+        self.label = "Value"
         self.category = "INPUT"
+        self.outputs = {
+            "value": Output(idname="value", datatype="INTEGER", label="Value")
+        }
 
-    def NodeOutputDatatype(self):
-        return "VALUE"
