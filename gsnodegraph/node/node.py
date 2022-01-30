@@ -65,6 +65,10 @@ class NodeBase(object):
     def NodeCategories(self):
         return self.nodegraph.node_categories
 
+    @property
+    def NodeImageDatatype(self):
+        return self.nodegraph.image_datatype
+
     def Init(self, idname) -> None:
         self.InitSockets()
         self.InitHeaderColor()
@@ -76,9 +80,6 @@ class NodeBase(object):
         img.SetMaskColour(0,0,0)
         img.InitAlpha()
         return img.ConvertToBitmap()
-
-    def NodeOutputDatatype(self) -> str:
-        return "IMAGE"
 
     def AddSocket(self, label, color, direction) -> None:
         self.ArrangeSockets()
@@ -96,7 +97,7 @@ class NodeBase(object):
             if socket.HitTest(pos - self.pos):
                 return socket
 
-    def EditParameter(self, idname, value):
+    def EditConnection(self, name, binding, socket):
         pass
 
     def InitHeaderColor(self) -> None:
@@ -111,7 +112,8 @@ class NodeBase(object):
         # [(label, idname, datatype), ...]
         for prop_id in self.properties:
             prop = self.properties[prop_id]
-            ins.append((prop.label, prop.idname, prop.datatype))
+            if prop.visible:
+                ins.append((prop.label, prop.idname, prop.datatype))
 
         if self.IsOutputNode() is not True:
             for output_id in self.outputs:
@@ -158,10 +160,11 @@ class NodeBase(object):
             self.SetSize(self.normal_size)
 
     def HasThumbnail(self) -> bool:
-        if self.NodeOutputDatatype() == "IMAGE":
-            return True
-        else:
-            return False
+        # # FIXME: should depend on the input datatype
+        # if self.NodeOutputDatatype() == self.ImageDatatype:
+        #     return True
+        # else:
+        return False
 
     def IsOutputNode(self) -> bool:
         """ Override method to set whether the node is the output or not. """

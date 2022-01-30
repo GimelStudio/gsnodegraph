@@ -31,6 +31,7 @@ class Property(object):
         self.default = default
         self.binding = None
         self.datatype = None
+        self.visible = True
 
 
 class ImageProp(Property):
@@ -61,14 +62,12 @@ class IntegerProp(Property):
         self.value = value
 
 
-
 class Output(object):
     def __init__(self, idname, datatype, label, visible=True):
         self.idname = idname
         self.datatype = datatype
         self.label = label 
         self.visible = visible
-
 
 
 class OutputNode(NodeBase):

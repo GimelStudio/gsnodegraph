@@ -51,6 +51,7 @@ class NodeGraphBase(wx.ScrolledCanvas):
         self.node_registry = registry
         self.node_datatypes = config["node_datatypes"]
         self.node_categories = config["node_categories"]
+        self.image_datatype = config["image_datatype"]
 
         self.matrix = ZMatrix()
         self.identity = ZMatrix()
@@ -759,14 +760,14 @@ class NodeGraphBase(wx.ScrolledCanvas):
         src_socket.wires.append(wire)
         dst_socket.wires.append(wire)
 
-        dst_socket.node.EditParameter(dst_socket.idname, self.nodes[src_socket.node.id])
+        dst_socket.node.EditConnection(dst_socket.idname, self.nodes[src_socket.node.id], src_socket.idname)
         self.SendNodeConnectEvent()
 
     def DisconnectNodes(self, src_socket, dst_socket):
         for wire in self.wires:
             if wire.srcsocket is src_socket and wire.dstsocket is dst_socket:
                 self.wires.remove(wire)
-                wire.dstsocket.node.EditParameter(wire.dstsocket.idname, None)
+                wire.dstsocket.node.EditConnection(wire.dstsocket.idname, None, None)
 
         self.SendNodeDisconnectEvent()
 
