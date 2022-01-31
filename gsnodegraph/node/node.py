@@ -48,6 +48,7 @@ class NodeBase(object):
 
         self.label = ""
         self.category = None
+        self.has_thumbnail = False
 
         self.thumbnail = self.CreateEmptyBitmap()
         self.expandicon_bmp = ICON_IMAGE.GetBitmap()
@@ -119,6 +120,10 @@ class NodeBase(object):
             for output_id in self.outputs:
                 output = self.outputs[output_id]
                 outs.append((output.label, output.idname, output.datatype))
+                # If there is an image datatype then we know there 
+                # should be a thumbnail for this node.
+                if output.datatype == self.NodeImageDatatype:
+                    self.has_thumbnail = True
 
         x, y, w, h = self.GetRect()
         x, y = self.pos
@@ -160,11 +165,7 @@ class NodeBase(object):
             self.SetSize(self.normal_size)
 
     def HasThumbnail(self) -> bool:
-        # # FIXME: should depend on the input datatype
-        # if self.NodeOutputDatatype() == self.ImageDatatype:
-        #     return True
-        # else:
-        return False
+        return self.has_thumbnail
 
     def IsOutputNode(self) -> bool:
         """ Override method to set whether the node is the output or not. """
