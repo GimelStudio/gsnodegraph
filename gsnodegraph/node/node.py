@@ -112,7 +112,7 @@ class NodeBase(object):
         # [(label, idname, datatype), ...]
         for prop_id in self.properties:
             prop = self.properties[prop_id]
-            if prop.exposed:
+            if prop.exposed and prop.can_be_exposed:
                 ins.append((prop.label, prop.idname, prop.datatype))
 
         if self.IsOutputNode() is not True:
