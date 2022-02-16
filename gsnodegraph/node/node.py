@@ -19,6 +19,7 @@ import wx
 from gsnodegraph.assets.bitmaps import ICON_IMAGE
 
 from .socket import NodeSocket
+from .utils import TruncateText
 from ..constants import (NODE_DEFAULT_WIDTH, NODE_DEFAULT_HEIGHT,
                          NODE_HEADER_MUTED_COLOR,
                          SOCKET_INPUT, SOCKET_OUTPUT, NODE_THUMB_PADDING, NODE_Y_PADDING,
@@ -74,6 +75,7 @@ class NodeBase(object):
         self.InitSockets()
         self.InitHeaderColor()
         self.InitSize()
+        self.InitLabel()
         self.SetIdName(idname)
 
     def CreateEmptyBitmap(self) -> wx.Bitmap:
@@ -164,6 +166,15 @@ class NodeBase(object):
         else:
             self.SetSize(self.normal_size)
 
+    def InitLabel(self):
+        # Number of chars to truncate from the label is based on 
+        # whether there is a toggle icon taking up space on this node.
+        if self.HasThumbnail() == True:
+            chars = 15
+        else:
+            chars = 20
+        self.label = TruncateText(self.GetLabel(), chars)
+
     def HasThumbnail(self) -> bool:
         return self.has_thumbnail
 
@@ -172,7 +183,7 @@ class NodeBase(object):
         return self.is_output
 
     def GetLabel(self) -> str:
-        """ Override method to set the node label. """
+        """ Get the node label. """
         return self.label
 
     def GetCategory(self) -> str:
