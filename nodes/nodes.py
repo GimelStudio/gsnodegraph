@@ -25,19 +25,24 @@ class Image(object):
 
 class Property(object):
     """ Example property base class. """
-    def __init__(self, idname, label, default):
+    def __init__(self, idname, default, label, exposed=True, 
+                 can_be_exposed=True, visible=False):
         self.idname = idname
         self.label = label
         self.default = default
+        self.exposed = exposed
+        self.can_be_exposed = can_be_exposed
+        self.visible = visible
         self.binding = None
         self.datatype = None
-        self.visible = True
-
+        
 
 class ImageProp(Property):
     """ Example property. """
-    def __init__(self, idname, label, default=Image()):
-        Property.__init__(self, idname, label, default)
+    def __init__(self, idname, default=Image(), label="Image", exposed=True, 
+                 can_be_exposed=True, visible=True):
+        Property.__init__(self, idname, default, label, exposed, 
+                          can_be_exposed, visible)
         self.value = default
         self.datatype = "IMAGE"
 
@@ -50,8 +55,10 @@ class ImageProp(Property):
 
 class IntegerProp(Property):
     """ Example property. """
-    def __init__(self, idname, label, default=1):
-        Property.__init__(self, idname, label, default)
+    def __init__(self, idname, default=1, label="Integer", exposed=True, 
+                 can_be_exposed=True, visible=True):
+        Property.__init__(self, idname, default, label, exposed, 
+                          can_be_exposed, visible)
         self.value = default
         self.datatype = "INTEGER"
 
@@ -80,7 +87,7 @@ class OutputNode(NodeBase):
         self.is_output = True
         self.category = "OUTPUT"
         self.properties = {
-            "image_socketid": ImageProp("image_socketid", "Image")
+            "image_socketid": ImageProp("image_socketid", label="Image")
         }
 
 
@@ -109,8 +116,8 @@ class MixNode(NodeBase):
             "alpha": Output(idname="alpha", datatype="INTEGER", label="Alpha")
         }
         self.properties = {
-            "image1_socketid": ImageProp("image1_socketid", "Overlay"),
-            "image2_socketid": ImageProp("image2_socketid", "Image")
+            "image1_socketid": ImageProp("image1_socketid", label="Overlay"),
+            "image2_socketid": ImageProp("image2_socketid", label="Image")
         }
 
 
@@ -126,8 +133,8 @@ class BlurNode(NodeBase):
             "image": Output(idname="image", datatype="IMAGE", label="Image")
         }
         self.properties = {
-            "image1_socketid": ImageProp("image1_socketid", "Image"),
-            "int_socketid": IntegerProp("int_socketid", "Integer")
+            "image1_socketid": ImageProp("image1_socketid", label="Image"),
+            "int_socketid": IntegerProp("int_socketid", label="Integer")
         }
 
 
@@ -143,9 +150,9 @@ class BlendNode(NodeBase):
             "image": Output(idname="image", datatype="IMAGE", label="Image")
         }
         self.properties = {
-            "alphamask_socketid": ImageProp("alphamask_socketid", "Alpha"),
-            "image1_socketid": ImageProp("image1_socketid", "Image"),
-            "image2_socketid": ImageProp("image2_socketid", "Image")
+            "alphamask_socketid": ImageProp("alphamask_socketid", label="Alpha"),
+            "image1_socketid": ImageProp("image1_socketid", label="Image"),
+            "image2_socketid": ImageProp("image2_socketid", label="Image")
         }
 
 
