@@ -52,7 +52,7 @@ class NodeGraphBase(wx.ScrolledCanvas):
         self.node_datatypes = config["node_datatypes"]
         self.node_categories = config["node_categories"]
         self.image_datatype = config["image_datatype"]
-        self.input_nodes_category = config["input_nodes_category"]
+        self.input_nodes_categories = config["input_nodes_categories"]
 
         self.matrix = ZMatrix()
         self.identity = ZMatrix()
@@ -699,7 +699,7 @@ class NodeGraphBase(wx.ScrolledCanvas):
         return node
 
     def IsInputNode(self, node) -> bool:
-        if node.category == self.input_nodes_category:
+        if node.GetCategory() in self.input_nodes_categories:
             return True
         else:
             return False

@@ -76,7 +76,7 @@ class MyFrame(wx.Frame):
                 "FLOAT": "#A0A0A0",  # Grey
                 "VALUE": "#A0A0A0",  # Depreciated!
             },
-            "input_nodes_category": "INPUT",
+            "input_nodes_categories": ["INPUT"],
             "node_categories": {
                 "INPUT": "#E64555",  # Burgendy
                 "DRAW": "#AF4467",  # Pink
