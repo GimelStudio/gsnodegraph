@@ -52,6 +52,7 @@ class NodeGraphBase(wx.ScrolledCanvas):
         self.node_datatypes = config["node_datatypes"]
         self.node_categories = config["node_categories"]
         self.image_datatype = config["image_datatype"]
+        self.input_nodes_category = config["input_nodes_category"]
 
         self.matrix = ZMatrix()
         self.identity = ZMatrix()
@@ -402,18 +403,19 @@ class NodeGraphBase(wx.ScrolledCanvas):
                                                         wx.ITEM_NORMAL)
                 self.context_menu.AppendItem(delete_menuitem)
 
-                if self.active_node.IsMuted() is not True:
-                    mute_menuitem = flatmenu.FlatMenuItem(self.context_menu,
-                                                            ID_CONTEXTMENU_MUTENODE,
-                                                            "{0}{1}".format(_("Mute"), "\tShift+M"), "",
-                                                            wx.ITEM_NORMAL)
-                    self.context_menu.AppendItem(mute_menuitem)
-                else:
-                    unmute_menuitem = flatmenu.FlatMenuItem(self.context_menu,
-                                                            ID_CONTEXTMENU_UNMUTENODE,
-                                                            _("Unmute"), "",
-                                                            wx.ITEM_NORMAL)
-                    self.context_menu.AppendItem(unmute_menuitem)
+                if self.IsInputNode(self.active_node) is not True:
+                    if self.active_node.IsMuted() is not True:
+                        mute_menuitem = flatmenu.FlatMenuItem(self.context_menu,
+                                                                ID_CONTEXTMENU_MUTENODE,
+                                                                "{0}{1}".format(_("Mute"), "\tShift+M"), "",
+                                                                wx.ITEM_NORMAL)
+                        self.context_menu.AppendItem(mute_menuitem)
+                    else:
+                        unmute_menuitem = flatmenu.FlatMenuItem(self.context_menu,
+                                                                ID_CONTEXTMENU_UNMUTENODE,
+                                                                _("Unmute"), "",
+                                                                wx.ITEM_NORMAL)
+                        self.context_menu.AppendItem(unmute_menuitem)
 
         else:
             if self.sel_nodes != []:
@@ -695,6 +697,12 @@ class NodeGraphBase(wx.ScrolledCanvas):
         else:
             node.pos = wx.Point(pos[0], pos[1])
         return node
+
+    def IsInputNode(self, node) -> bool:
+        if node.category == self.input_nodes_category:
+            return True
+        else:
+            return False
 
     def SocketHasWire(self, dst_socket):
         for wire in self.wires:
