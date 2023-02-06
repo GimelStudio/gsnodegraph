@@ -144,7 +144,7 @@ class NodeBase(object):
             # Create the node sockets
             socket = NodeSocket(label=p[0], idname=p[1], datatype=p[2],
                                 node=self, direction=socket_type)
-            socket.pos = wx.Point(x, 45 + (19 * i))
+            socket.pos = wx.Point(x, int(45 + (19 * i)))
             socket.SetColor(self.NodeDatatypes[socket.datatype])
             sockets.append(socket)
 
@@ -320,10 +320,10 @@ class NodeBase(object):
         # Thumbnail
         if self.IsExpanded() and self.HasThumbnail():
             # Calculate the coords for the placement of the thumbnail
-            thumb_rect = wx.Rect((x+NODE_THUMB_PADDING/2),
-                                  y+self.lastsocket_pos+(NODE_Y_PADDING*2),
-                                  NODE_DEFAULT_WIDTH-NODE_THUMB_PADDING,
-                                  self.thumbnail.Height)
+            thumb_rect = wx.Rect(int(x+NODE_THUMB_PADDING/2),
+                                 int(y+self.lastsocket_pos+(NODE_Y_PADDING*2)),
+                                 NODE_DEFAULT_WIDTH-NODE_THUMB_PADDING,
+                                 self.thumbnail.Height)
 
             # Draw thumbnail border and background
             dc.SetPen(wx.Pen(wx.Colour(NODE_THUMB_BORDER_COLOR), 1))

@@ -75,9 +75,9 @@ class NodeSocket(object):
 
         # Socket label margin
         if self.direction == SOCKET_INPUT:
-            x = pos.x + 12
+            x = int(pos.x + 12)
         else:
-            x = pos.x - w - 12
+            x = int(pos.x - w - 12)
 
         # Draw the label
-        dc.DrawText(self.label, x, pos.y - h / 2)
+        dc.DrawText(self.label, x, int(pos.y - h / 2))

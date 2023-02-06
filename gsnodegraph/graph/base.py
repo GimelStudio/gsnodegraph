@@ -286,8 +286,8 @@ class NodeGraphBase(wx.ScrolledCanvas):
 
         # If the MMB is down, calculate the scrolling of the graph
         if event.MiddleIsDown() is True and event.Dragging():
-            dx = (winpnt[0] - self.middle_pnt[0])
-            dy  =(winpnt[1] - self.middle_pnt[1])
+            dx = int(winpnt[0] - self.middle_pnt[0])
+            dy = int(winpnt[1] - self.middle_pnt[1])
             self.ScrollNodeGraph(dx, dy)
             self.ScenePostPan(dx, dy)
             self.UpdateNodeGraph()
@@ -445,8 +445,8 @@ class NodeGraphBase(wx.ScrolledCanvas):
 
     def SetZoomLevel(self, zoom, x=0, y=0):
         if x == 0:
-            x = self.Size[0]/2
-            y = self.Size[1]/2
+            x = int(self.Size[0]/2)
+            y = int(self.Size[1]/2)
         self.ScenePostScale(zoom, zoom, x, y)
         self.UpdateZoomValue()
         self.UpdateNodeGraph()
@@ -496,7 +496,7 @@ class NodeGraphBase(wx.ScrolledCanvas):
         """ Calculate the mouse coordinates, taking into account
         the current scroll position and zoom level. """
         pnt = self.ConvertWindowToScene(self.ConvertCoords(pnt))
-        return wx.Point(pnt[0], pnt[1])
+        return wx.Point(int(pnt[0]), int(pnt[1]))
 
     def ConvertCoords(self, pnt):
         """ Convert coords to account for scrolling.
@@ -543,8 +543,8 @@ class NodeGraphBase(wx.ScrolledCanvas):
         if self.bg_img != None:
             image = self.bg_img
 
-            x = (self.GetSize()[0]/2.0 - image.Width/2.0)
-            y = (self.GetSize()[1]/2.0 - image.Height/2.0)
+            x = int(self.GetSize()[0]/2.0 - image.Width/2.0)
+            y = int(self.GetSize()[1]/2.0 - image.Height/2.0)
             pnt = self.ConvertCoords(wx.Point(x, y))
             dc.DrawBitmap(image, pnt[0], pnt[1], useMask=False)
 
@@ -568,7 +568,7 @@ class NodeGraphBase(wx.ScrolledCanvas):
         # Calculate the position and draw the add node button
         padding = 10
         x = (padding)
-        y = ((self.GetSize()[1] - self.addnode_btn.GetHeight()) - padding)
+        y = int((self.GetSize()[1] - self.addnode_btn.GetHeight()) - padding)
         pnt = self.ConvertCoords(wx.Point(x, y))
         self.addnode_btn.Draw(dc, pnt)
 
@@ -884,8 +884,8 @@ class NodeGraphBase(wx.ScrolledCanvas):
         else:
             scale_y = window_height / float(bottom - top)
 
-        cx = ((right + left) / 2)
-        cy = ((top + bottom) / 2)
+        cx = int((right + left) / 2)
+        cy = int((top + bottom) / 2)
         self.matrix.Reset()
         self.matrix.PostTranslate(-cx, -cy)
         if lock:
