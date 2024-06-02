@@ -17,7 +17,7 @@ setup(
   url = 'https://github.com/GimelStudio/gsnodegraph',
   keywords = ['nodegraph', 'nodes', 'graph', 'node-based', 'widget'],
   install_requires = [
-      'wxpython==4.2.0'
+      'wxpython==4.2.1'
     ],
   classifiers = [
     'Development Status :: 2 - Pre-Alpha',
